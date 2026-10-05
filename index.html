@@ -1,0 +1,1351 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ujung Jari</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#4f7d8c" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#192024" media="(prefers-color-scheme: dark)">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Ujung Jari">
+<meta name="description" content="Ujung Jari: belajar huruf, angka, bentuk, warna, dan pola, pelan-pelan dengan jari.">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&family=Noto+Naskh+Arabic:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#e9eef0; --surface:#fbfcfc; --surface-2:#f2f6f7;
+  --ink:#26343a; --muted:#67787f; --line:#d7e0e3;
+  --accent:#4f7d8c; --accent-soft:#d8e5e9;
+  --ok:#6b9b76; --ok-soft:#dbe9dd; --star:#c99a4e;
+  --radius:22px;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  color-scheme:light dark;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#192024; --surface:#232d31; --surface-2:#1f282c;
+    --ink:#e3eaec; --muted:#9bacb2; --line:#334045;
+    --accent:#8cb5c1; --accent-soft:#2b3a40;
+    --ok:#8ab694; --ok-soft:#2c3a31; --star:#d9b573;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#192024; --surface:#232d31; --surface-2:#1f282c;
+  --ink:#e3eaec; --muted:#9bacb2; --line:#334045;
+  --accent:#8cb5c1; --accent-soft:#2b3a40;
+  --ok:#8ab694; --ok-soft:#2c3a31; --star:#d9b573;
+}
+*,*::before,*::after{box-sizing:border-box}
+html,body{height:100%;margin:0}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{
+  background:var(--bg); color:var(--ink);
+  font-family:Andika,"Segoe UI",system-ui,-apple-system,sans-serif;
+  font-size:17px; line-height:1.5;
+  -webkit-tap-highlight-color:transparent; -webkit-text-size-adjust:100%;
+  display:flex; flex-direction:column; overscroll-behavior:none;
+}
+button{font:inherit;color:inherit;cursor:pointer;border:none;background:none}
+:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+
+header{display:flex;align-items:center;gap:10px;padding:10px 14px;min-height:60px;
+  background:var(--surface);border-bottom:1px solid var(--line);flex:0 0 auto}
+header h1{font-size:19px;margin:0;font-weight:700;flex:1;text-align:center}
+.icon-btn{width:48px;height:48px;border-radius:16px;background:var(--surface-2);
+  display:grid;place-items:center;font-size:22px;flex:0 0 auto}
+.icon-btn[hidden]{display:none}
+main{flex:1 1 auto;overflow-y:auto;padding:16px 16px 22px;display:flex;flex-direction:column}
+
+/* Tiap materi punya warna sendiri. Warnanya dipilih yang mid-tone supaya
+   terbaca baik di tema terang maupun gelap, dan tetap rendah stimulus. */
+body[data-topic="upper"]{--accent:#5f94a3}
+body[data-topic="lower"]{--accent:#6a9c77}
+body[data-topic="num"]{--accent:#8d80b3}
+body[data-topic="hijaiyah"]{--accent:#5b9b8f}
+body[data-topic="shape"]{--accent:#c08a57}
+body[data-topic="color"]{--accent:#bd7d8e}
+body[data-topic="pattern"]{--accent:#5b8bb8}
+@supports (color: color-mix(in srgb, red 50%, blue)){
+  body[data-topic]{--accent-soft:color-mix(in srgb, var(--accent) 20%, var(--surface))}
+}
+
+.hero{text-align:center;padding:0 0 14px}
+.hero p{margin:0 0 10px;color:var(--muted);font-size:15px}
+.chip{display:inline-flex;align-items:center;gap:6px;background:var(--surface);
+  border:1px solid var(--line);border-radius:999px;padding:6px 14px;font-size:15px}
+.chip b{color:var(--star)}
+
+.menu{display:flex;flex-direction:column;gap:10px}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:24px;
+  padding:14px 16px;display:flex;align-items:center;gap:14px;text-align:left;width:100%}
+.tile .bubble{width:62px;height:62px;flex:0 0 auto;border-radius:20px;display:grid;place-items:center;
+  font-size:28px;font-weight:700;color:var(--tint);background:var(--tint-soft)}
+.tile .bubble svg{width:34px;height:34px;color:var(--tint)}
+.bubble-ar{font-family:"Noto Naskh Arabic","Noto Sans Arabic",serif;font-size:34px;line-height:1}
+.tile .tx{flex:1;min-width:0}
+.tile .tx b{display:block;font-size:19px}
+.tile .tx i{display:block;font-style:normal;color:var(--muted);font-size:14px;margin-top:1px}
+.bar{display:block;height:7px;border-radius:999px;background:var(--surface-2);margin-top:8px;overflow:hidden}
+.bar u{display:block;height:100%;background:var(--tint);border-radius:999px}
+.tile.pasang{border-color:var(--accent);border-width:2px}
+button.mailbtn{border:none;cursor:pointer}
+
+.tabs{display:flex;gap:5px;background:var(--surface-2);padding:5px;border-radius:16px;
+  margin-bottom:12px;flex:0 0 auto}
+.tab{flex:1;padding:11px 2px;border-radius:12px;text-align:center;font-size:14px;color:var(--muted)}
+.tab[aria-selected="true"]{background:var(--surface);color:var(--ink);font-weight:700;
+  box-shadow:0 1px 2px rgba(0,0,0,.06)}
+
+.stage{flex:1 0 auto;display:flex;flex-direction:column;justify-content:center;gap:12px;min-height:0;padding-bottom:4px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:30px;padding:18px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px}
+.gl{font-size:clamp(100px,36vw,170px);line-height:1.05;font-weight:700}
+.gl.ar{font-family:"Noto Naskh Arabic","Noto Sans Arabic",serif;line-height:1.45;
+  font-size:clamp(96px,34vw,160px)}
+.prompt .gl.ar{font-size:60px}
+.choice .gl.ar{font-size:42px}
+.card .sh{width:min(56vw,230px);height:min(56vw,230px);color:var(--accent)}
+.card .sw{width:min(50vw,200px);height:min(50vw,200px)}
+.word{font-size:21px;color:var(--muted)}
+.word .emoji{font-size:30px;vertical-align:-4px;margin-right:6px}
+.counter{text-align:center;color:var(--muted);font-size:15px;flex:0 0 auto}
+.sh{display:block}
+.sw{display:inline-block;border-radius:14px;border:2px solid var(--line)}
+.sw.round{border-radius:50%}
+
+.controls{display:flex;gap:10px;align-items:stretch;flex:0 0 auto}
+.ctrl{background:var(--surface);border:1px solid var(--line);border-radius:20px;min-height:68px;
+  display:grid;place-items:center;font-size:26px;flex:1}
+.ctrl.say{background:var(--accent-soft);border-color:transparent;flex:1.4;font-size:17px;
+  font-weight:700;color:var(--ink);gap:8px;grid-auto-flow:column}
+.ctrl:disabled{opacity:.35}
+.ctrl.locked{opacity:.35}
+
+.dots{display:grid;grid-template-columns:repeat(10,1fr);gap:4px;width:min(100%,260px);margin-top:6px}
+.dots i{aspect-ratio:1;border-radius:5px;background:var(--surface-2);display:block}
+.dots i.on{background:var(--accent)}
+.objs{display:grid;gap:4px 8px;justify-items:center;justify-content:center}
+.objs span{font-size:30px;line-height:1.1}
+.prompt .objs span{font-size:34px}
+.choice .objs span{font-size:22px}
+
+
+/* dibuat seperti tab di atasnya, dan flex:0 0 auto supaya tidak pernah tergencet */
+.stagecap{font-size:13px;color:var(--muted);text-align:center;margin:0 0 6px;flex:0 0 auto}
+.stageseg{display:flex;gap:6px;flex:0 0 auto;margin-bottom:6px;
+  background:var(--surface-2);padding:6px;border-radius:18px}
+.stageseg button{flex:1 1 0;min-width:0;min-height:62px;border-radius:14px;font-size:17px;
+  color:var(--muted);display:grid;place-items:center;padding:0;white-space:nowrap;
+  touch-action:manipulation}
+.stageseg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);
+  font-weight:700;box-shadow:0 1px 2px rgba(0,0,0,.06)}
+.stagehint{font-size:14px;color:var(--muted);text-align:center;margin:0 0 10px;flex:0 0 auto}
+
+.ask{text-align:center;font-size:19px;margin:0}
+.ask b{font-size:25px}
+/* Kotak contoh sengaja beda warna dan bergaris tegas, supaya anak tahu
+   "yang ini yang dicari", bukan salah satu pilihan. */
+.prompt{display:grid;place-items:center;background:var(--accent-soft);
+  border:3px solid var(--accent);border-radius:24px;padding:12px;min-height:104px}
+.prompt .gl{font-size:64px}
+.prompt .sh{width:88px;height:88px;color:var(--accent)}
+.prompt .sw{width:84px;height:84px}
+.choices{display:grid;gap:10px;grid-template-columns:repeat(2,1fr)}
+.choice{background:var(--surface);border:2px solid var(--line);border-radius:24px;min-height:92px;
+  display:grid;place-items:center;padding:8px}
+.choice .gl{font-size:44px}
+.choice .sh{width:62px;height:62px;color:var(--accent)}
+.choice .sw{width:58px;height:58px}
+.choice.right{background:var(--ok-soft);border-color:var(--ok)}
+.choice.again{opacity:.3}
+.choice.hint{border-color:var(--accent);background:var(--accent-soft)}
+.seq{display:flex;gap:8px;justify-content:center;align-items:center;flex-wrap:wrap}
+.seq .cell{width:52px;height:52px;display:grid;place-items:center;background:var(--surface);
+  border:1px solid var(--line);border-radius:14px}
+.seq .cell svg{width:38px;height:38px}
+.seq .cell.ask-cell{border-style:dashed;font-size:26px;color:var(--muted)}
+.progress{display:flex;gap:8px;justify-content:center;padding-top:2px}
+.progress span{width:14px;height:14px;border-radius:50%;background:var(--surface-2);border:1px solid var(--line)}
+.progress span.done{background:var(--star);border-color:transparent}
+.done-note{text-align:center;font-size:18px;color:var(--muted);min-height:26px;margin:0}
+.done-note.ok{color:var(--ok);font-weight:700}
+
+.canvas-wrap{flex:1 1 auto;background:var(--surface);border:1px solid var(--line);border-radius:28px;
+  overflow:hidden;min-height:300px;position:relative;
+  width:calc(100% + 20px);margin-left:-10px;margin-right:-10px}
+canvas{display:block;width:100%;height:100%;touch-action:none}
+.stamp{position:absolute;top:12px;right:14px;width:46px;height:46px;border-radius:50%;
+  background:var(--ok);color:#fff;display:grid;place-items:center;font-size:26px;opacity:0;pointer-events:none}
+.stamp.show{opacity:1}
+.gauge{height:10px;background:var(--surface-2);border-radius:999px;overflow:hidden;margin-top:12px;flex:0 0 auto}
+.gauge i{display:block;height:100%;width:0;background:var(--accent);border-radius:999px}
+.gauge i.ok{background:var(--ok)}
+.status{text-align:center;font-size:17px;color:var(--muted);margin:10px 0 0;min-height:26px;flex:0 0 auto}
+.status.ok{color:var(--ok);font-weight:700}
+
+.setting{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:14px 16px;margin-bottom:10px}
+.setting .lbl{font-weight:700}
+.setting .hint{color:var(--muted);font-size:14px;margin-top:2px}
+.seg{display:flex;gap:6px;margin-top:10px}
+.seg button{flex:1;padding:12px 4px;border-radius:12px;background:var(--surface-2);font-size:15px;min-height:48px}
+.seg button[aria-pressed="true"]{background:var(--accent);color:#fff;font-weight:700}
+.seg.small button{font-size:14px}
+.note{color:var(--muted);font-size:14px;text-align:center;padding:10px 4px 0}
+.ov{position:fixed;inset:0;background:rgba(10,16,18,.55);display:grid;place-items:center;
+  padding:18px;padding-top:calc(18px + env(safe-area-inset-top,0px));
+  padding-bottom:calc(18px + env(safe-area-inset-bottom,0px));z-index:50}
+.dlg{background:var(--surface);border:1px solid var(--line);border-radius:26px;
+  width:100%;max-width:460px;max-height:100%;overflow-y:auto;padding:20px}
+.dlg h3{margin:0 0 4px;font-size:20px}
+.dlg p{margin:0 0 10px;font-size:16px;line-height:1.55}
+.dlg ol{margin:0 0 12px;padding-left:22px}
+.dlg li{margin-bottom:6px;font-size:16px;line-height:1.5}
+.dlg .kecil{color:var(--muted);font-size:14px}
+.kondisi{background:var(--surface-2);border-radius:16px;padding:12px 14px;margin:0 0 12px;font-size:15px}
+.kondisi b{display:block;margin-bottom:2px}
+.kondisi .bad{color:var(--star)}
+.kondisi .good{color:var(--ok)}
+.dlgbtn{display:block;width:100%;min-height:56px;border-radius:16px;background:var(--surface-2);
+  font-size:16px;margin-top:8px}
+.dlgbtn.utama{background:var(--accent);color:#fff;font-weight:700}
+.dlgbtn.sunyi{background:none;color:var(--muted);font-size:14px;min-height:44px}
+.doc{max-width:560px}
+.doc h3{font-size:18px;margin:20px 0 6px}
+.doc h3:first-child{margin-top:4px}
+.doc p{margin:0 0 10px;font-size:16px;line-height:1.6}
+.doc ul{margin:0 0 10px;padding-left:20px}
+.doc li{margin-bottom:7px;font-size:16px;line-height:1.55}
+.doc .kecil{color:var(--muted);font-size:14px}
+.mailbtn{display:block;width:100%;background:var(--accent-soft);border-radius:18px;
+  min-height:60px;font-size:17px;font-weight:700;margin-top:6px;text-align:center;
+  line-height:60px;text-decoration:none;color:var(--ink)}
+
+@keyframes pop{from{transform:scale(.7);opacity:0}to{transform:scale(1);opacity:1}}
+@media (prefers-reduced-motion:no-preference){
+  .stamp.show{animation:pop .25s ease}
+  .choice,.stamp{transition:opacity .18s ease,background-color .18s ease,border-color .18s ease}
+  .gauge i{transition:width .2s ease,background-color .2s ease}
+}
+.no-motion .choice,.no-motion .stamp,.no-motion .gauge i{transition:none!important}
+.no-motion .stamp.show{animation:none!important}
+</style>
+</head>
+<body>
+<header>
+  <button class="icon-btn" id="back" aria-label="Kembali ke beranda" hidden>&#8592;</button>
+  <h1 id="title">Ujung Jari</h1>
+  <button class="icon-btn" id="gear" aria-label="Pengaturan">&#9881;</button>
+</header>
+<main id="main"></main>
+
+<script>
+(function(){
+"use strict";
+
+/* =======================================================================
+   SILAKAN UBAH BAGIAN INI SAJA. Sisanya tidak perlu disentuh.
+   Ganti alamat email di bawah dengan email kamu, simpan, lalu unggah
+   ulang file ini ke hosting. Tidak ada tempat lain yang perlu diubah.
+   ======================================================================= */
+var APP={
+  nama   : "Ujung Jari",
+  versi  : "2.2",
+  email  : "support.ujungjari@gmail.com",
+  subjek : "Saran untuk Ujung Jari"
+};
+/* ===================== BATAS BAGIAN YANG BOLEH DIUBAH ================== */
+
+/* ===================== DATA ===================== */
+
+var LETTERS="ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+var SAY={A:"a",B:"be",C:"ce",D:"de",E:"e",F:"ef",G:"ge",H:"ha",I:"i",J:"je",K:"ka",L:"el",
+M:"em",N:"en",O:"o",P:"pe",Q:"ki",R:"er",S:"es",T:"te",U:"u",V:"ve",W:"we",X:"eks",Y:"ye",Z:"zet"};
+/* Dipakai HANYA kalau suara Bahasa Indonesia tidak ada di perangkat dan
+   pengguna memilih tetap memakai suara apa pun. Ditulis dengan ejaan yang
+   dibaca mesin bahasa Inggris semirip mungkin dengan bunyi Indonesia:
+   "be" kalau dibaca mesin Inggris jadi "bi", maka ditulis "beh". */
+var SAY_ALT={A:"ah",B:"beh",C:"cheh",D:"deh",E:"eh",F:"eff",G:"gheh",H:"hah",I:"ee",J:"jeh",
+K:"kah",L:"ell",M:"em",N:"en",O:"oh",P:"peh",Q:"kee",R:"air",S:"ess",T:"teh",U:"oo",V:"feh",
+W:"weh",X:"eks",Y:"yeh",Z:"zet"};
+var WORD={
+A:["apel","\uD83C\uDF4E"],B:["bola","\u26BD"],C:["cicak","\uD83E\uDD8E"],D:["domba","\uD83D\uDC11"],
+E:["es krim","\uD83C\uDF66"],F:["foto","\uD83D\uDCF7"],G:["gajah","\uD83D\uDC18"],H:["hujan","\uD83C\uDF27\uFE0F"],
+I:["ikan","\uD83D\uDC1F"],J:["jam","\u23F0"],K:["kucing","\uD83D\uDC31"],L:["lampu","\uD83D\uDCA1"],
+M:["mobil","\uD83D\uDE97"],N:["nanas","\uD83C\uDF4D"],O:["obat","\uD83D\uDC8A"],P:["pisang","\uD83C\uDF4C"],
+Q:["qurma","\uD83C\uDF3F"],R:["rumah","\uD83C\uDFE0"],S:["sepatu","\uD83D\uDC5F"],T:["topi","\uD83D\uDC52"],
+U:["ular","\uD83D\uDC0D"],V:["vas bunga","\uD83C\uDF3C"],W:["wortel","\uD83E\uDD55"],X:["xilofon","\uD83C\uDFB9"],
+Y:["yoyo","\uD83E\uDE80"],Z:["zebra","\uD83E\uDD93"]};
+
+/* 28 huruf hijaiyah, urutan baku, bentuk tunggal (bukan sambung).
+   nama = yang ditampilkan, say = yang diucapkan mesin suara Indonesia. */
+var HIJAIYAH=[
+ {c:"\u0627",nama:"Alif", say:"alif", alt:"ah-lif", ar:"\u0623\u0644\u0641"},
+ {c:"\u0628",nama:"Ba",   say:"ba",   alt:"bah",    ar:"\u0628\u0627\u0621"},
+ {c:"\u062A",nama:"Ta",   say:"ta",   alt:"tah",    ar:"\u062A\u0627\u0621"},
+ {c:"\u062B",nama:"Tsa",  say:"tsa",  alt:"tsah",   ar:"\u062B\u0627\u0621"},
+ {c:"\u062C",nama:"Jim",  say:"jim",  alt:"jeem",   ar:"\u062C\u064A\u0645"},
+ {c:"\u062D",nama:"Ha",   say:"ha",   alt:"hah",    ar:"\u062D\u0627\u0621"},
+ {c:"\u062E",nama:"Kha",  say:"kho",  alt:"khoh",   ar:"\u062E\u0627\u0621"},
+ {c:"\u062F",nama:"Dal",  say:"dal",  alt:"dahl",   ar:"\u062F\u0627\u0644"},
+ {c:"\u0630",nama:"Dzal", say:"dzal", alt:"dzahl",  ar:"\u0630\u0627\u0644"},
+ {c:"\u0631",nama:"Ra",   say:"ro",   alt:"roh",    ar:"\u0631\u0627\u0621"},
+ {c:"\u0632",nama:"Zai",  say:"zai",  alt:"zay",    ar:"\u0632\u0627\u064A"},
+ {c:"\u0633",nama:"Sin",  say:"sin",  alt:"seen",   ar:"\u0633\u064A\u0646"},
+ {c:"\u0634",nama:"Syin", say:"syin", alt:"sheen",  ar:"\u0634\u064A\u0646"},
+ {c:"\u0635",nama:"Shad", say:"shod", alt:"shod",   ar:"\u0635\u0627\u062F"},
+ {c:"\u0636",nama:"Dhad", say:"dhod", alt:"dhod",   ar:"\u0636\u0627\u062F"},
+ {c:"\u0637",nama:"Tha",  say:"tho",  alt:"toh",    ar:"\u0637\u0627\u0621"},
+ {c:"\u0638",nama:"Zha",  say:"zho",  alt:"zoh",    ar:"\u0638\u0627\u0621"},
+ {c:"\u0639",nama:"Ain",  say:"ain",  alt:"ayn",    ar:"\u0639\u064A\u0646"},
+ {c:"\u063A",nama:"Ghain",say:"goin", alt:"ghoyn",  ar:"\u063A\u064A\u0646"},
+ {c:"\u0641",nama:"Fa",   say:"fa",   alt:"fah",    ar:"\u0641\u0627\u0621"},
+ {c:"\u0642",nama:"Qaf",  say:"qof",  alt:"kof",    ar:"\u0642\u0627\u0641"},
+ {c:"\u0643",nama:"Kaf",  say:"kaf",  alt:"kahf",   ar:"\u0643\u0627\u0641"},
+ {c:"\u0644",nama:"Lam",  say:"lam",  alt:"lahm",   ar:"\u0644\u0627\u0645"},
+ {c:"\u0645",nama:"Mim",  say:"mim",  alt:"meem",   ar:"\u0645\u064A\u0645"},
+ {c:"\u0646",nama:"Nun",  say:"nun",  alt:"noon",   ar:"\u0646\u0648\u0646"},
+ {c:"\u0648",nama:"Wau",  say:"wau",  alt:"wow",    ar:"\u0648\u0627\u0648"},
+ {c:"\u0647",nama:"Ha",   say:"ha",   alt:"hah",    ar:"\u0647\u0627\u0621"},
+ {c:"\u0644\u0627",nama:"Lam Alif", say:"lam alif", alt:"lahm ah-lif", ar:"\u0644\u0627\u0645 \u0623\u0644\u0641"},
+ {c:"\u0621",nama:"Hamzah", say:"hamzah", alt:"hahm-zah", ar:"\u0647\u0645\u0632\u0629"},
+ {c:"\u064A",nama:"Ya",   say:"ya",   alt:"yah",    ar:"\u064A\u0627\u0621"}
+];
+function hij(ch){for(var i=0;i<HIJAIYAH.length;i++) if(HIJAIYAH[i].c===ch) return HIJAIYAH[i]; return HIJAIYAH[0];}
+
+var ONES=["","satu","dua","tiga","empat","lima","enam","tujuh","delapan","sembilan","sepuluh","sebelas"];
+function terbilang(n){
+  if(n<12) return ONES[n];
+  if(n<20) return ONES[n-10]+" belas";
+  if(n<100){var t=Math.floor(n/10),r=n%10;return ONES[t]+" puluh"+(r?" "+ONES[r]:"");}
+  return "seratus";
+}
+
+/* Bentuk ditulis sekali sebagai path pada kotak 100x100.
+   Path yang sama dipakai untuk tampilan (SVG) dan untuk menilai tulisan (Path2D). */
+var SHAPES=[
+ {id:"lingkaran",d:"M6 50 a44 44 0 1 0 88 0 a44 44 0 1 0 -88 0 Z"},
+ {id:"persegi",d:"M10 10 H90 V90 H10 Z"},
+ {id:"segitiga",d:"M50 8 L92 88 H8 Z"},
+ {id:"persegi panjang",d:"M6 26 H94 V74 H6 Z"},
+ {id:"belah ketupat",d:"M50 6 L94 50 L50 94 L6 50 Z"},
+ {id:"bintang",d:"M50 6 L60.9 35 L91.8 36.4 L67.6 55.7 L75.9 85.6 L50 68.5 L24.1 85.6 L32.4 55.7 L8.2 36.4 L39.1 35 Z"},
+ {id:"hati",d:"M50 88 C8 60 10 18 34 18 C45 18 50 27 50 32 C50 27 55 18 66 18 C90 18 92 60 50 88 Z"},
+ {id:"oval",d:"M14 50 a36 30 0 1 0 72 0 a36 30 0 1 0 -72 0 Z"}
+];
+function shapeD(id){for(var i=0;i<SHAPES.length;i++) if(SHAPES[i].id===id) return SHAPES[i].d; return SHAPES[0].d;}
+
+var COLORS=[
+ {id:"merah",hex:"#d64545"},{id:"jingga",hex:"#e08a3c"},{id:"kuning",hex:"#e3c03c"},
+ {id:"hijau",hex:"#4f9d5d"},{id:"biru",hex:"#3a6ea5"},{id:"ungu",hex:"#7d5ba6"},
+ {id:"merah muda",hex:"#e59bb0"},{id:"cokelat",hex:"#8a6240"},{id:"abu-abu",hex:"#9aa3a7"},
+ {id:"hitam",hex:"#2f2f2f"},{id:"putih",hex:"#fbfbfb"}
+];
+function colorHex(id){for(var i=0;i<COLORS.length;i++) if(COLORS[i].id===id) return COLORS[i].hex; return "#888";}
+
+var HAS_PATH2D = (typeof window.Path2D==="function");
+var TOPICS={
+ upper:{title:"Huruf Besar",kind:"letter",tabs:["belajar","tulis","latihan"]},
+ lower:{title:"Huruf Kecil",kind:"letter",tabs:["belajar","tulis","latihan"]},
+ num:{title:"Angka",kind:"num",tabs:["belajar","tulis","latihan"]},
+ hijaiyah:{title:"Huruf Hijaiyah",kind:"hijaiyah",tabs:["belajar","tulis","latihan"]},
+ shape:{title:"Bentuk",kind:"shape",tabs:HAS_PATH2D?["belajar","tulis","latihan"]:["belajar","latihan"]},
+ color:{title:"Warna",kind:"color",tabs:["belajar","latihan"]},
+ pattern:{title:"Pola",kind:"pattern",tabs:["latihan"]}
+};
+var TABNAME={belajar:"Belajar",tulis:"Menulis",latihan:"Latihan"};
+
+/* ===================== STATE ===================== */
+
+var KEY="belajar-huruf-angka:v1";
+var S={sound:true,motion:true,words:true,choices:2,range:10,theme:"auto",stars:0,
+       writeLock:true,writeLevel:"longgar",writeGuide:"otomatis",
+       stage:"samakan",helpQuiz:true,voiceMode:"id",hijVoice:"auto",askName:"sebut",ttsHideNotice:false,done:{}};
+try{var raw=localStorage.getItem(KEY); if(raw){var p=JSON.parse(raw); for(var k in S){if(p&&p[k]!==undefined)S[k]=p[k];}}}catch(e){}
+if(!S.done||typeof S.done!=="object") S.done={};
+function doneMap(t){ if(!S.done[t]) S.done[t]={}; return S.done[t]; }
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+
+function applyTheme(){
+  var r=document.documentElement;
+  if(S.theme==="auto") r.removeAttribute("data-theme"); else r.setAttribute("data-theme",S.theme);
+  document.body.classList.toggle("no-motion",!S.motion);
+}
+applyTheme();
+
+var V={screen:"home",topic:"upper",tab:"belajar",idx:0,q:null,streak:0};
+
+/* ===================== SUARA ===================== */
+
+var voices=[], ttsUnlocked=false, ttsNote="";
+var TTS=!!window.speechSynthesis && typeof window.SpeechSynthesisUtterance==="function";
+function loadVoices(){try{voices=speechSynthesis.getVoices()||[];}catch(e){voices=[];}}
+if(TTS){ loadVoices();
+  try{ speechSynthesis.onvoiceschanged=function(){ loadVoices(); setTimeout(function(){ if(typeof showVoiceNotice==="function") showVoiceNotice(false); },200); }; }catch(e){} }
+function idVoice(){
+  var i,lg;
+  for(i=0;i<voices.length;i++){
+    lg=(voices[i].lang||"").toLowerCase().replace("_","-");
+    /* sebagian Android melaporkan Indonesia sebagai in_ID, kode Java lama */
+    if(lg==="id"||lg==="in"||lg.indexOf("id-")===0||lg.indexOf("in-id")===0||lg.indexOf("ind")===0) return voices[i];
+  }
+  for(i=0;i<voices.length;i++){
+    var nm=((voices[i].name||"")+" "+(voices[i].voiceURI||"")).toLowerCase();
+    if(nm.indexOf("indonesia")>=0||nm.indexOf("bahasa")>=0) return voices[i];
+  }
+  return null;
+}
+function arVoice(){
+  var i,lg;
+  for(i=0;i<voices.length;i++){
+    lg=(voices[i].lang||"").toLowerCase().replace("_","-");
+    if(lg==="ar"||lg.indexOf("ar-")===0) return voices[i];
+  }
+  return null;
+}
+function unlockTTS(){
+  if(!TTS||ttsUnlocked) return;
+  ttsUnlocked=true;
+  try{var u=new SpeechSynthesisUtterance(" ");u.volume=0;u.lang="id-ID";speechSynthesis.speak(u);
+      setTimeout(function(){ loadVoices(); showVoiceNotice(false); },600);}catch(e){}
+}
+/* speak(teks, teksCadangan)
+   teks         : ejaan Indonesia, dipakai kalau suara Indonesia tersedia
+   teksCadangan : ejaan untuk mesin suara asing, dipakai hanya bila
+                  pengguna memilih "Suara apa pun"                        */
+function speak(text,alt,arText){
+  if(!S.sound||!TTS||!text) return;
+  if(!voices.length) loadVoices();
+  /* Huruf hijaiyah: kalau ponsel punya suara Arab, pakai itu dan ucapkan
+     nama huruf dalam bahasa Arab. Hasilnya jauh lebih benar daripada
+     memaksa mesin Indonesia membaca "ghain" atau "qaf". */
+  if(arText && S.hijVoice!=="id"){
+    var va=arVoice();
+    if(va){ utter(va,arText,va.lang); return; }
+  }
+  var v=idVoice();
+  if(!v && S.voiceMode!=="any"){
+    /* Tidak ada suara Indonesia. Lebih baik diam daripada mengajari anak
+       nama huruf yang keliru, misalnya B terdengar "bi". */
+    ttsNote="Suara Bahasa Indonesia belum terpasang, jadi suara dimatikan.";
+    return;
+  }
+  utter(v, v?text:(alt||text), v?v.lang:"id-ID");
+}
+function utter(voice,say,lang){
+  try{
+    var busy=speechSynthesis.speaking||speechSynthesis.pending;
+    if(busy) speechSynthesis.cancel();
+    try{speechSynthesis.resume();}catch(e){}
+    setTimeout(function(){
+      try{
+        var u=new SpeechSynthesisUtterance(say);
+        if(voice) u.voice=voice;
+        u.lang=lang||"id-ID";
+        u.rate=.75;u.pitch=1;u.volume=1;
+        u.onerror=function(ev){ttsNote="Gagal: "+((ev&&ev.error)||"tidak diketahui");};
+        u.onstart=function(){ttsNote="";};
+        speechSynthesis.speak(u);
+      }catch(e){}
+    }, busy?160:40);
+  }catch(e){}
+}
+/* pasangan teks untuk satu item: [ejaan Indonesia, ejaan cadangan] */
+function sayPair(x){
+  var t=kind();
+  if(t==="letter"){var u=String(x).toUpperCase();return [SAY[u],SAY_ALT[u]];}
+  if(t==="hijaiyah"){var hh=hij(x);return [hh.say,hh.alt||hh.say,hh.ar];}
+  if(t==="num") return [terbilang(x),terbilang(x)];
+  return [String(x),String(x)];
+}
+var DN=null;
+function langName(code){
+  try{ if(!DN) DN=new Intl.DisplayNames(["id"],{type:"language"}); var n=DN.of(code); if(n) return n; }catch(e){}
+  var M={en:"Inggris",id:"Indonesia",ms:"Melayu",ar:"Arab",ja:"Jepang",ko:"Korea",zh:"Mandarin",
+         hi:"Hindi",es:"Spanyol",fr:"Prancis",de:"Jerman",pt:"Portugis",ru:"Rusia",th:"Thai",vi:"Vietnam"};
+  return M[code]||code;
+}
+function voiceLangs(){
+  var seen={},out=[],i,lg,base;
+  for(i=0;i<voices.length;i++){
+    lg=(voices[i].lang||"").replace("_","-");
+    base=lg.split("-")[0].toLowerCase();
+    if(base&&!seen[base]){seen[base]=1;out.push(base);}
+  }
+  return out;
+}
+/* Mengucapkan beberapa penggal berurutan, boleh beda suara.
+   Dipakai untuk hijaiyah: "mana huruf" dengan suara Indonesia,
+   lalu nama hurufnya dengan suara Arab. */
+function speakSeq(parts){
+  if(!S.sound||!TTS||!parts.length) return;
+  try{
+    if(speechSynthesis.speaking||speechSynthesis.pending) speechSynthesis.cancel();
+    try{speechSynthesis.resume();}catch(e){}
+    setTimeout(function(){
+      for(var i=0;i<parts.length;i++){
+        try{
+          var u=new SpeechSynthesisUtterance(parts[i].text);
+          if(parts[i].voice) u.voice=parts[i].voice;
+          u.lang=parts[i].lang||"id-ID";
+          u.rate=.75;u.pitch=1;u.volume=1;
+          speechSynthesis.speak(u);
+        }catch(e){}
+      }
+    },120);
+  }catch(e){}
+}
+function ttsStatus(){
+  if(!TTS) return "Browser ini tidak punya mesin suara. Coba buka lewat Chrome.";
+  if(!voices.length) return "Belum ada suara terbaca. Tekan Tes suara sekali lagi.";
+  var v=idVoice();
+  if(!v) return "Suara Bahasa Indonesia belum terpasang. Ada "+voices.length+" suara lain, tapi mesin asing membaca B jadi \"bi\". Buka Setelan ponsel, cari Teks ke ucapan, pilih mesin Google, lalu unduh data suara Bahasa Indonesia. Kalau mau tetap bersuara sementara, ubah setelan Suara huruf di bawah.";
+  return "Siap. Memakai suara "+(v.name||v.lang)+"."+(ttsNote?" "+ttsNote:"");
+}
+
+/* ===================== ISI MATERI ===================== */
+
+function kind(){ return TOPICS[V.topic].kind; }
+function items(){
+  var t=kind();
+  if(t==="letter") return V.topic==="upper"?LETTERS:LETTERS.map(function(c){return c.toLowerCase();});
+  if(t==="num"){var a=[],max=S.range||100;for(var i=1;i<=max;i++)a.push(i);return a;}
+  if(t==="hijaiyah") return HIJAIYAH.map(function(x){return x.c;});
+  if(t==="shape") return SHAPES.map(function(s){return s.id;});
+  if(t==="color") return COLORS.map(function(c){return c.id;});
+  return [];
+}
+function labelOf(x){
+  var t=kind();
+  if(t==="letter") return SAY[String(x).toUpperCase()];
+  if(t==="num") return terbilang(x);
+  if(t==="hijaiyah") return hij(x).say;
+  return String(x);
+}
+/* yang ditulis di layar saat menyebut sebuah item */
+function namaOf(x){ return kind()==="hijaiyah" ? hij(x).nama : String(x); }
+function kindWord(){
+  var t=kind();
+  return t==="num"?"angka":t==="shape"?"bentuk":t==="color"?"warna":"huruf";
+}
+function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+
+/* visual(id, alt) menggambar satu item.
+   alt=false bentuk utama, alt=true bentuk pasangannya (dipakai tahap Pasangkan). */
+function visual(id,alt){
+  var t=kind();
+  if(t==="letter"){
+    var ch=alt ? (V.topic==="upper"?String(id).toLowerCase():String(id).toUpperCase()) : id;
+    return '<span class="gl">'+esc(ch)+'</span>';
+  }
+  /* di atas 20, titik sudah tidak terbaca, jadi pasangannya memakai kata bacanya */
+  if(t==="num") return alt ? (id>20 ? '<span class="word">'+terbilang(id)+'</span>' : miniObjects(id))
+                           : '<span class="gl">'+esc(id)+'</span>';
+  if(t==="hijaiyah") return alt ? '<span class="word">'+esc(hij(id).nama)+'</span>'
+                                : '<span class="gl ar">'+esc(id)+'</span>';
+  if(t==="shape") return svgShape(id,alt?{outline:true}:{});
+  if(t==="color") return '<span class="sw'+(alt?" round":"")+'" style="background:'+colorHex(id)+'"></span>';
+  return "";
+}
+function svgShape(id,o){
+  o=o||{};
+  var fill=o.fill||"currentColor";
+  var d=shapeD(id);
+  if(o.outline) return '<svg class="sh" viewBox="0 0 100 100" aria-hidden="true"><path d="'+d+'" fill="none" stroke="'+fill+'" stroke-width="9" stroke-linejoin="round"/></svg>';
+  return '<svg class="sh" viewBox="0 0 100 100" aria-hidden="true"><path d="'+d+'" fill="'+fill+'"/></svg>';
+}
+/* Benda yang bisa dihitung, bukan kotak warna. Satu jenis benda saja
+   dan selalu sama, supaya anak tidak terpecah perhatiannya. */
+var BENDA="\uD83C\uDF4E";
+function miniObjects(n){
+  var kol=Math.min(5,n);
+  var h='<span class="objs" style="grid-template-columns:repeat('+kol+',auto)" aria-hidden="true">';
+  for(var i=0;i<n;i++) h+='<span>'+BENDA+'</span>';
+  return h+'</span>';
+}
+
+/* ===================== KERANGKA LAYAR ===================== */
+
+var main=document.getElementById("main");
+var back=document.getElementById("back");
+var gear=document.getElementById("gear");
+var titleEl=document.getElementById("title");
+
+function render(){
+  document.body.setAttribute("data-topic", V.screen==="topic"?V.topic:"");
+  back.hidden=(V.screen==="home");
+  gear.hidden=(V.screen==="set"||V.screen==="about");
+  if(V.screen==="home"){titleEl.textContent="Ujung Jari";main.innerHTML=viewHome();}
+  else if(V.screen==="set"){titleEl.textContent="Pengaturan";main.innerHTML=viewSettings();}
+  else if(V.screen==="about"){titleEl.textContent="Tentang";main.innerHTML=viewAbout();}
+  else{
+    titleEl.textContent = V.topic==="num" ? "Angka 1 sampai "+(S.range||100) : TOPICS[V.topic].title;
+    main.innerHTML=viewTopic();
+    if(V.tab==="tulis") mountCanvas();
+  }
+  main.scrollTop=0;
+}
+
+var TINT={upper:"#5f94a3",lower:"#6a9c77",num:"#8d80b3",hijaiyah:"#5b9b8f",shape:"#c08a57",color:"#bd7d8e",pattern:"#5b8bb8"};
+
+function viewHome(){
+  var h='<div class="hero"><p>Belajar pelan-pelan, satu demi satu</p>'+
+        '<span class="chip">&#11088; <b>'+S.stars+'</b></span></div><div class="menu">';
+  h+=tile("upper","Aa","Huruf Besar","A sampai Z",cnt("upper"),26);
+  h+=tile("lower","aa","Huruf Kecil","a sampai z",cnt("lower"),26);
+  h+=tile("num","12","Angka","1 sampai "+(S.range||100),cnt("num"),S.range||100);
+  h+=tile("hijaiyah",'<span class="bubble-ar">\u0628</span>',"Huruf Hijaiyah","Alif sampai Ya",cnt("hijaiyah"),HIJAIYAH.length);
+  h+=tile("shape",svgShape("segitiga"),"Bentuk","Lingkaran, segitiga, bintang",cnt("shape"),SHAPES.length);
+  h+=tile("color",'<span class="sw" style="width:28px;height:28px;background:'+colorHex("merah")+'"></span>',
+          "Warna","Cocokkan lalu kenali",0,0);
+  h+=tile("pattern",svgShape("lingkaran"),"Pola","Tebak yang berikutnya",0,0);
+  if(bisaPasang()){
+    h+='<button class="tile pasang" data-act="install" style="--tint:var(--accent);--tint-soft:var(--accent-soft)">'+
+       '<span class="bubble">&#11015;</span><span class="tx"><b>Pasang di layar utama</b>'+
+       '<i>Punya ikon sendiri, bisa dibuka tanpa internet</i></span></button>';
+  }
+  h+='<button class="tile" data-act="go-about" style="--tint:var(--muted);--tint-soft:var(--surface-2)">'+
+     '<span class="bubble">&#8505;</span><span class="tx"><b>Tentang</b><i>Sekilas aplikasi ini</i></span></button>';
+  h+='<button class="tile" data-act="go-set" style="--tint:var(--muted);--tint-soft:var(--surface-2)">'+
+     '<span class="bubble">&#9881;</span><span class="tx"><b>Pengaturan</b><i>Suara, bantuan, tingkat kesulitan</i></span></button>';
+  return h+'</div><p class="note">Tidak ada batas waktu. Anak bisa berhenti kapan saja.</p>';
+}
+function tile(topic,icon,t,sub,done,total){
+  var tint=TINT[topic]||"var(--accent)";
+  var style='--tint:'+tint+';--tint-soft:'+tint+'22';
+  var bar = total ? '<span class="bar"><u style="width:'+Math.round(Math.min(1,done/total)*100)+'%"></u></span>' : '';
+  var note = total ? sub+', selesai '+done+' dari '+total : sub;
+  return '<button class="tile" data-act="go" data-topic="'+topic+'" style="'+style+'">'+
+         '<span class="bubble">'+icon+'</span>'+
+         '<span class="tx"><b>'+t+'</b><i>'+note+'</i>'+bar+'</span></button>';
+}
+
+function viewTopic(){
+  var tabs=TOPICS[V.topic].tabs, h="";
+  if(tabs.length>1){
+    h+='<div class="tabs" role="tablist">';
+    for(var i=0;i<tabs.length;i++){
+      h+='<button class="tab" role="tab" aria-selected="'+(V.tab===tabs[i])+'" data-act="tab" data-tab="'+tabs[i]+'">'+TABNAME[tabs[i]]+'</button>';
+    }
+    h+='</div>';
+  }
+  if(V.tab==="belajar") h+=viewLearn();
+  else if(V.tab==="tulis") h+=viewWrite();
+  else h+=viewQuiz();
+  return h;
+}
+
+/* ===================== BELAJAR ===================== */
+
+function viewLearn(){
+  var list=items(), cur=list[V.idx], t=kind();
+  var h='<div class="stage"><div class="card">'+visual(cur,false);
+  if(t==="num") h+='<div class="word">'+terbilang(cur)+'</div>'+dotsHTML(cur);
+  else if(t==="letter"){
+    var up=String(cur).toUpperCase();
+    if(S.words) h+='<div class="word"><span class="emoji">'+WORD[up][1]+'</span>'+WORD[up][0]+'</div>';
+  }
+  else if(t==="hijaiyah") h+='<div class="word">'+esc(hij(cur).nama)+'</div>';
+  else h+='<div class="word">'+esc(cur)+'</div>';
+  h+='</div><div class="counter">'+(V.idx+1)+' dari '+list.length+'</div></div>'+
+  '<div class="controls">'+
+  '<button class="ctrl" data-act="prev" aria-label="Sebelumnya"'+(V.idx===0?" disabled":"")+'>&#8592;</button>'+
+  '<button class="ctrl say" data-act="say">&#128266; Dengar</button>'+
+  '<button class="ctrl" data-act="next" aria-label="Berikutnya"'+(V.idx===list.length-1?" disabled":"")+'>&#8594;</button>'+
+  '</div>';
+  return h;
+}
+function dotsHTML(n){
+  var h='<div class="dots" aria-hidden="true">', max=Math.max(10,S.range||100);
+  for(var i=1;i<=max;i++) h+='<i class="'+(i<=n?"on":"")+'"></i>';
+  return h+'</div>';
+}
+
+/* ===================== LATIHAN TIGA TAHAP ===================== */
+/* samakan  : contoh dan pilihan bentuknya sama persis
+   pasangkan: contoh dalam bentuk lain (a untuk A, titik untuk angka)
+   tunjuk   : hanya nama dan suara, tanpa contoh                        */
+
+var STAGES=[
+  ["samakan","Sama","Samakan","Contoh dan pilihan bentuknya sama persis"],
+  ["pasangkan","Pasang","Pasangkan","Contoh tampil dalam bentuk lain"],
+  ["tunjuk","Tunjuk","Tunjuk","Hanya nama dan suara, tanpa contoh"]
+];
+function stageInfo(id){for(var i=0;i<STAGES.length;i++) if(STAGES[i][0]===id) return STAGES[i]; return STAGES[0];}
+
+function newQuestion(){
+  if(kind()==="pattern") return newPattern();
+  var list=items();
+  var target=list[Math.floor(Math.random()*list.length)];
+  var opts=[target], guard=0, n=Math.min(S.choices,list.length);
+  while(opts.length<n&&guard<400){
+    var c=list[Math.floor(Math.random()*list.length)];
+    if(opts.indexOf(c)<0) opts.push(c);
+    guard++;
+  }
+  shuffle(opts);
+  V.q={target:target,opts:opts,solved:false,wrongs:0,note:""};
+}
+function shuffle(a){
+  for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}
+  return a;
+}
+
+function viewQuiz(){
+  if(!V.q) newQuestion();
+  if(kind()==="pattern") return viewPatternQuiz();
+  var q=V.q, st=S.stage, h="";
+
+  h+='<p class="stagecap">Tahap latihan</p><div class="stageseg" role="tablist">';
+  for(var i=0;i<STAGES.length;i++){
+    h+='<button role="tab" data-act="stage" data-v="'+STAGES[i][0]+
+       '" aria-label="'+STAGES[i][2]+'" aria-pressed="'+(st===STAGES[i][0])+'">'+STAGES[i][1]+'</button>';
+  }
+  h+='</div><p class="stagehint">'+stageInfo(st)[3]+'</p><div class="stage">';
+
+  if(st==="tunjuk"){
+    h+='<p class="ask">Mana '+kindWord()+' <b>'+esc(namaOf(q.target))+'</b>?</p>';
+  }else{
+    h+='<p class="ask">'+(st==="samakan"?"Cari yang sama":"Cari pasangannya")+'</p>'+
+       '<div class="prompt">'+visual(q.target,st==="pasangkan")+'</div>';
+  }
+  h+='<div class="choices">';
+  for(var j=0;j<q.opts.length;j++){
+    h+='<button class="choice" data-act="answer" data-v="'+esc(q.opts[j])+'">'+visual(q.opts[j],false)+'</button>';
+  }
+  h+='</div><p class="done-note">'+esc(q.note||"")+'</p><div class="progress">';
+  for(var s=0;s<5;s++) h+='<span></span>';
+  h+='</div></div>'+
+  '<div class="controls">'+
+  '<button class="ctrl say" data-act="say-q">&#128266; Dengar lagi</button>'+
+  '<button class="ctrl" data-act="skip" aria-label="Soal lain">&#8594;</button>'+
+  '</div>';
+  return h;
+}
+function paintProgress(){
+  var dots=main.querySelectorAll(".progress span");
+  var n=(V.streak%5===0&&V.streak>0)?5:V.streak%5;
+  for(var i=0;i<dots.length;i++) dots[i].className=i<n?"done":"";
+}
+
+function answer(btn){
+  var q=V.q; if(!q||q.solved) return;
+  var picked=btn.getAttribute("data-v");
+  var note=main.querySelector(".done-note");
+
+  if(picked===String(q.target)){
+    q.solved=true;
+    btn.className="choice right";
+    V.streak++; S.stars++; save();
+    if(note){note.textContent="Benar";note.className="done-note ok";}
+    paintProgress();
+    if(kind()==="pattern") speak("benar","buh-nar");
+    else { var pr=sayPair(q.target); speak(pr[0],pr[1],pr[2]); }
+    setTimeout(function(){ newQuestion(); render(); askQ(); },1200);
+    return;
+  }
+
+  btn.className="choice again"; btn.disabled=true;
+  q.wrongs++;
+  if(note){note.textContent="Coba lagi";note.className="done-note";}
+
+  /* Errorless learning: setelah dua kali meleset, pilihan yang salah
+     ikut dipudarkan sampai tersisa yang benar, supaya anak tetap
+     mengakhiri soal ini dengan keberhasilan, bukan kegagalan beruntun. */
+  if(S.helpQuiz&&q.wrongs>=2){
+    var all=main.querySelectorAll(".choice");
+    for(var i=0;i<all.length;i++){
+      var v=all[i].getAttribute("data-v");
+      if(v===String(q.target)) all[i].className="choice hint";
+      else { all[i].className="choice again"; all[i].disabled=true; }
+    }
+    if(note) note.textContent="Yang ini";
+  }
+  setTimeout(function(){ if(V.q&&!V.q.solved) askQ(); },500);
+}
+
+/* ===================== POLA ===================== */
+
+function newPattern(){
+  var pool=[];
+  var sh=shuffle(SHAPES.map(function(s){return s.id;})).slice(0,3);
+  var co=shuffle(COLORS.slice(0,8).map(function(c){return c.id;})).slice(0,3);
+  for(var i=0;i<3;i++) pool.push({s:sh[i],c:co[i]});
+  var rules=[[0,1],[0,0,1],[0,1,2]];
+  var rule=rules[Math.floor(Math.random()*rules.length)];
+  var seq=[], total=6;
+  for(var j=0;j<total;j++) seq.push(pool[rule[j%rule.length]]);
+  var answerEl=seq[total-1];
+  var shown=seq.slice(0,total-1);
+  var opts=[answerEl];
+  for(var k=0;k<pool.length&&opts.length<Math.max(2,Math.min(S.choices,3));k++){
+    if(pool[k]!==answerEl) opts.push(pool[k]);
+  }
+  shuffle(opts);
+  V.q={pattern:true,shown:shown,opts:opts,target:idOf(answerEl),solved:false,wrongs:0,note:""};
+}
+function idOf(el){ return el.s+"|"+el.c; }
+function cellHTML(el){ return '<span class="cell">'+svgShape(el.s,{fill:colorHex(el.c)})+'</span>'; }
+
+function viewPatternQuiz(){
+  var q=V.q, h='<div class="stage"><p class="ask">Apa yang muncul berikutnya?</p><div class="seq">';
+  for(var i=0;i<q.shown.length;i++) h+=cellHTML(q.shown[i]);
+  h+='<span class="cell ask-cell">?</span></div><div class="choices">';
+  for(var j=0;j<q.opts.length;j++){
+    h+='<button class="choice" data-act="answer" data-v="'+idOf(q.opts[j])+'">'+svgShape(q.opts[j].s,{fill:colorHex(q.opts[j].c)})+'</button>';
+  }
+  h+='</div><p class="done-note">'+esc(q.note||"")+'</p><div class="progress">';
+  for(var s=0;s<5;s++) h+='<span></span>';
+  h+='</div></div>'+
+  '<div class="controls"><button class="ctrl say" data-act="skip">Soal lain</button></div>';
+  return h;
+}
+
+/* ===================== MENULIS ===================== */
+
+var pad=null,pctx=null,strokes=[],drawing=false,curStroke=null,geom=null,padW=0,padH=0;
+var PEN=16, TOL=20, RING=24;
+var LEVELS={longgar:{cov:.55,acc:.42},sedang:{cov:.70,acc:.58},teliti:{cov:.84,acc:.70}};
+function level(){ return LEVELS[S.writeLevel]||LEVELS.longgar; }
+
+function curKey(){ return String(items()[V.idx]); }
+function isWritten(){ return !!doneMap(V.topic)[curKey()]; }
+function cnt(t){ var n=0,d=S.done[t]||{}; for(var k in d) n++; return n; }
+
+/* Prompt fading: bantuan menyusut seiring anak makin mahir. */
+function guideMode(){
+  if(S.writeGuide!=="otomatis") return S.writeGuide;
+  var n=cnt(V.topic);
+  if(n<6) return "penuh";
+  if(n<14) return "garis";
+  return "samar";
+}
+
+function viewWrite(){
+  var list=items(), cur=String(list[V.idx]);
+  var done=isWritten(), locked=S.writeLock&&!done;
+  var g=guideMode();
+  var gLabel=g==="penuh"?"bantuan penuh":g==="garis"?"garis tepi":"garis samar";
+  return '<div class="canvas-wrap"><canvas id="pad"></canvas>'+
+  '<div class="stamp'+(done?" show":"")+'" id="w-stamp" aria-hidden="true">&#10003;</div></div>'+
+  '<div class="gauge" aria-hidden="true"><i id="w-bar" class="'+(done?"ok":"")+'" style="width:'+(done?100:0)+'%"></i></div>'+
+  '<p class="status'+(done?" ok":"")+'" id="w-status" role="status">'+
+    (done?"Sudah pas":"Tebalkan "+kindWord()+" "+esc(namaOf(cur)))+'</p>'+
+  '<div class="counter">Ke '+(V.idx+1)+' dari '+list.length+', selesai '+cnt(V.topic)+', '+gLabel+'</div>'+
+  '<div class="controls">'+
+  '<button class="ctrl" data-act="prev" aria-label="Sebelumnya"'+(V.idx===0?" disabled":"")+'>&#8592;</button>'+
+  '<button class="ctrl say" data-act="clear">&#9003; Hapus</button>'+
+  '<button class="ctrl'+(locked?" locked":"")+'" id="w-next" data-act="next" aria-label="Berikutnya"'+
+    (V.idx===list.length-1?" disabled":"")+'>&#8594;</button>'+
+  '</div>';
+}
+
+function mountCanvas(){
+  pad=document.getElementById("pad"); if(!pad) return;
+  strokes=[]; drawing=false;
+  var r=pad.parentNode.getBoundingClientRect();
+  padW=Math.max(80,r.width); padH=Math.max(80,r.height);
+  var dpr=Math.min(window.devicePixelRatio||1,2);
+  pad.width=Math.round(padW*dpr); pad.height=Math.round(padH*dpr);
+  pctx=pad.getContext("2d");
+  pctx.setTransform(dpr,0,0,dpr,0,0);
+  geom=buildGeom(pctx,padW,padH,String(items()[V.idx]));
+  redraw();
+
+  pad.onpointerdown=function(e){
+    e.preventDefault(); drawing=true;
+    try{pad.setPointerCapture(e.pointerId);}catch(_){}
+    curStroke=[pos(e)]; strokes.push(curStroke);
+    penStyle(pctx,1,PEN); pctx.strokeStyle=cssVar("--accent","#4f7d8c");
+    var p=curStroke[0];
+    pctx.beginPath(); pctx.moveTo(p.x,p.y); pctx.lineTo(p.x+.01,p.y); pctx.stroke();
+  };
+  pad.onpointermove=function(e){
+    if(!drawing) return;
+    var p=pos(e), q=curStroke[curStroke.length-1];
+    curStroke.push(p);
+    pctx.beginPath(); pctx.moveTo(q.x,q.y); pctx.lineTo(p.x,p.y); pctx.stroke();
+  };
+  pad.onpointerup=pad.onpointercancel=function(){ if(!drawing) return; drawing=false; evaluate(); };
+}
+function pos(e){var r=pad.getBoundingClientRect();return{x:e.clientX-r.left,y:e.clientY-r.top};}
+function cssVar(n,f){var v=getComputedStyle(document.documentElement).getPropertyValue(n).trim();return v||f;}
+function penStyle(c,scale,w){c.lineWidth=w*scale;c.lineCap="round";c.lineJoin="round";}
+
+function glyphFont(px){
+  return '700 '+px+'px '+(kind()==="hijaiyah"
+    ? '"Noto Naskh Arabic","Noto Sans Arabic",serif'
+    : 'Andika, sans-serif');
+}
+function buildGeom(c,w,h,id){
+  if(kind()==="shape"){
+    var box=Math.min(w,h)*0.92;
+    return {kind:"path",d:shapeD(id),box:box,dx:(w-box)/2,dy:(h-box)/2};
+  }
+  var size=Math.min(h*0.88,w*0.94);
+  /* huruf Arab punya badan lebih kecil dari kotak fontnya, jadi diberi tambahan */
+  if(kind()==="hijaiyah") size*=1.12;
+  c.font=glyphFont(size);
+  var tw=c.measureText(id).width;
+  if(tw>w*0.94) size=size*(w*0.94)/tw;
+  return {kind:"text",text:id,size:size,x:w/2,y:h/2};
+}
+/* satu bentuk dipakai dua kali: inti (core) dan zona toleransi (zone) */
+function corePaint(c,sc,mode){
+  if(geom.kind==="text"){
+    c.font=glyphFont(geom.size*sc);
+    c.textAlign="center"; c.textBaseline="middle";
+    if(mode==="zone"){ c.lineWidth=TOL*2*sc; c.lineJoin="round"; c.strokeStyle="#000";
+                       c.strokeText(geom.text,geom.x*sc,geom.y*sc); }
+    c.fillStyle="#000"; c.fillText(geom.text,geom.x*sc,geom.y*sc);
+    return;
+  }
+  var u=(geom.box/100)*sc;
+  c.save(); c.translate(geom.dx*sc,geom.dy*sc); c.scale(u,u);
+  c.lineJoin="round"; c.lineCap="round"; c.strokeStyle="#000";
+  c.lineWidth=((mode==="zone"?RING+TOL*2:RING)*100)/geom.box;
+  c.stroke(new Path2D(geom.d));
+  c.restore();
+}
+function drawGhost(){
+  pctx.clearRect(0,0,padW,padH);
+  var g=guideMode();
+  var soft=cssVar("--accent-soft","#d8e5e9"), line=cssVar("--muted","#67787f");
+  pctx.save();
+  if(g==="samar") pctx.globalAlpha=.35;
+  if(geom.kind==="text"){
+    pctx.font=glyphFont(geom.size);
+    pctx.textAlign="center"; pctx.textBaseline="middle";
+    if(g==="penuh"){ pctx.fillStyle=soft; pctx.fillText(geom.text,geom.x,geom.y); }
+    pctx.setLineDash([9,9]); pctx.lineWidth=2; pctx.strokeStyle=line;
+    pctx.strokeText(geom.text,geom.x,geom.y);
+  }else{
+    var u=geom.box/100;
+    pctx.translate(geom.dx,geom.dy); pctx.scale(u,u);
+    pctx.lineJoin="round"; pctx.lineCap="round";
+    var path=new Path2D(geom.d);
+    if(g==="penuh"){ pctx.strokeStyle=soft; pctx.lineWidth=(RING*100)/geom.box; pctx.stroke(path); }
+    pctx.setLineDash([9,9]); pctx.lineWidth=(2*100)/geom.box; pctx.strokeStyle=line; pctx.stroke(path);
+  }
+  pctx.restore();
+}
+function drawStrokes(c,sc,width){
+  penStyle(c,sc,width); c.strokeStyle="#000";
+  for(var i=0;i<strokes.length;i++){
+    var s=strokes[i]; if(!s.length) continue;
+    c.beginPath(); c.moveTo(s[0].x*sc,s[0].y*sc);
+    if(s.length===1) c.lineTo(s[0].x*sc+.01,s[0].y*sc);
+    else for(var j=1;j<s.length;j++) c.lineTo(s[j].x*sc,s[j].y*sc);
+    c.stroke();
+  }
+}
+function redraw(){
+  if(!pctx||!geom) return;
+  drawGhost();
+  penStyle(pctx,1,PEN); pctx.strokeStyle=cssVar("--accent","#4f7d8c");
+  for(var i=0;i<strokes.length;i++){
+    var s=strokes[i]; if(!s.length) continue;
+    pctx.beginPath(); pctx.moveTo(s[0].x,s[0].y);
+    if(s.length===1) pctx.lineTo(s[0].x+.01,s[0].y);
+    else for(var j=1;j<s.length;j++) pctx.lineTo(s[j].x,s[j].y);
+    pctx.stroke();
+  }
+}
+function alphaOf(w,h,paint){
+  var cv=document.createElement("canvas"); cv.width=w; cv.height=h;
+  var c=cv.getContext("2d"); paint(c);
+  return c.getImageData(0,0,w,h).data;
+}
+function evaluate(){
+  if(!geom||!strokes.length) return;
+  var sc=Math.min(1,240/Math.max(padW,padH));
+  var AW=Math.max(40,Math.round(padW*sc)), AH=Math.max(40,Math.round(padH*sc));
+  var core=alphaOf(AW,AH,function(c){corePaint(c,sc,"fill");});
+  var zone=alphaOf(AW,AH,function(c){corePaint(c,sc,"zone");});
+  var ink =alphaOf(AW,AH,function(c){drawStrokes(c,sc,PEN);});
+  var fat =alphaOf(AW,AH,function(c){drawStrokes(c,sc,PEN+20);});
+
+  var coreN=0,coreHit=0,inkN=0,inkIn=0;
+  for(var i=3;i<core.length;i+=4){
+    if(core[i]>24){coreN++; if(fat[i]>24) coreHit++;}
+    if(ink[i]>24){inkN++; if(zone[i]>24) inkIn++;}
+  }
+  var cov=coreN?coreHit/coreN:0, acc=inkN?inkIn/inkN:0, L=level();
+  var enough=inkN>(AW*AH*0.004);
+  var pass=enough&&cov>=L.cov&&acc>=L.acc;
+
+  var bar=document.getElementById("w-bar");
+  if(bar){bar.style.width=Math.min(100,Math.round(cov/L.cov*100))+"%"; bar.className=pass?"ok":"";}
+
+  if(pass) finishItem();
+  else if(!enough) setStatus("Mulai tebalkan garisnya",false);
+  else if(acc<L.acc) setStatus("Ikuti garisnya ya",false);
+  else setStatus("Bagus, masih ada bagian yang kosong",false);
+}
+function setStatus(text,ok){
+  var el=document.getElementById("w-status");
+  if(el){el.textContent=text;el.className="status"+(ok?" ok":"");}
+}
+function finishItem(){
+  var key=curKey(), first=!isWritten();
+  if(first){doneMap(V.topic)[key]=1; S.stars++; save();}
+  setStatus("Sudah pas",true);
+  var st=document.getElementById("w-stamp"); if(st) st.className="stamp show";
+  var nx=document.getElementById("w-next"); if(nx) nx.className="ctrl";
+  if(first) speak("bagus","bah-goos");
+}
+function clearPad(){
+  if(!pctx) return;
+  strokes=[]; redraw();
+  var bar=document.getElementById("w-bar");
+  if(!isWritten()){
+    if(bar){bar.style.width="0%";bar.className="";}
+    setStatus("Tebalkan "+kindWord()+" "+namaOf(curKey()),false);
+  }
+}
+var resizeT=null;
+window.addEventListener("resize",function(){
+  if(V.screen!=="topic"||V.tab!=="tulis") return;
+  clearTimeout(resizeT);
+  resizeT=setTimeout(function(){var keep=strokes.slice();mountCanvas();strokes=keep;redraw();},200);
+});
+
+/* ===================== PENGATURAN ===================== */
+
+function viewAbout(){
+  var mail="mailto:"+APP.email+"?subject="+encodeURIComponent(APP.subjek);
+  return '<div class="doc">'+
+
+  '<h3>Apa ini</h3>'+
+  '<p>Ujung Jari dipakai untuk belajar huruf besar, huruf kecil, angka, bentuk, warna, dan pola. '+
+  'Semua dikerjakan dengan jari, langsung di layar. Tidak perlu internet setelah dipasang.</p>'+
+
+  '<h3>Untuk siapa</h3>'+
+  '<p>Aplikasi ini dibuat untuk anak spesial, anak yang butuh waktu lebih lama dan suasana yang lebih tenang '+
+  'saat belajar. Anak mana pun boleh memakainya, caranya sama saja.</p>'+
+
+  '<h3>Kenapa dibuat seperti ini</h3>'+
+  '<ul>'+
+  '<li>Satu layar hanya berisi satu hal, supaya anak tidak terpecah perhatiannya.</li>'+
+  '<li>Tidak ada hitungan mundur, tidak ada nilai, tidak ada kalah. Anak boleh berhenti kapan saja.</li>'+
+  '<li>Kalau anak keliru, aplikasi tidak bilang salah. Soalnya diulang. Kalau dua kali meleset, pilihan yang keliru '+
+  'memudar sampai tinggal yang benar, jadi anak selalu menutup soal dengan berhasil.</li>'+
+  '<li>Saat menulis, garis bantunya menipis sendiri begitu anak mulai lancar.</li>'+
+  '<li>Huruf berikutnya baru terbuka kalau yang sekarang sudah selesai. Kalau ini bikin anak tertekan, '+
+  'matikan saja lewat Pengaturan.</li>'+
+  '<li>Warnanya sengaja kalem, tanpa kedipan dan tanpa suara ramai.</li>'+
+  '</ul>'+
+
+  '<h3>Untuk orang tua dan guru</h3>'+
+  '<p>Hampir semuanya bisa diatur dari Pengaturan: suara, gerakan, warna layar, jumlah pilihan saat latihan, '+
+  'batas angka, dan seberapa teliti tulisan dinilai. Kalau anak mulai gelisah, turunkan dulu tingkatannya. '+
+  'Tidak ada yang perlu dikejar di sini.</p>'+
+  '<p>Perlu diingat, aplikasi ini alat bantu, bukan pengganti terapis atau guru. Paling bagus kalau dipakai '+
+  'mengikuti program yang sudah berjalan.</p>'+
+
+  '<h3>Data anak</h3>'+
+  '<p>Tidak ada data yang dikirim ke mana pun. Progres dan setelan hanya tersimpan di perangkat ini. '+
+  'Tidak ada iklan, tidak ada pendaftaran, tidak ada pembelian di dalam aplikasi.</p>'+
+
+  '<h3>Saran dan kritik</h3>'+
+  '<p>Kalau ada yang kurang pas, atau anak mengalami kesulitan tertentu, tolong ceritakan. '+
+  'Masukan dari yang memakai sehari-hari itu yang paling berguna.</p>'+
+  '<a class="mailbtn" href="'+mail+'">Kirim email</a>'+
+
+  '<h3>Memasang di layar utama</h3>'+
+  '<p>Supaya punya ikon sendiri dan bisa dibuka tanpa internet.</p>'+
+  '<button class="mailbtn" data-act="install">'+(sudahTerpasang()?"Sudah terpasang":"Pasang aplikasi")+'</button>'+
+  '<p class="kecil" style="text-align:center;margin-top:8px">'+APP.email+'</p>'+
+
+  '<p class="kecil" style="text-align:center;margin-top:18px">'+APP.nama+' versi '+APP.versi+'</p>'+
+  '</div>';
+}
+
+function viewSettings(){
+  return ''+
+  seg("Suara","Membacakan huruf dan angka","sound",[[true,"Nyala"],[false,"Mati"]])+
+  seg("Gerakan","Matikan bila anak mudah terganggu","motion",[[true,"Nyala"],[false,"Mati"]])+
+  seg("Suara huruf","Bila suara Indonesia tidak ada: diam, atau pakai suara asing dengan bunyi yang didekat-dekatkan","voiceMode",[["id","Hanya Indonesia"],["any","Suara apa pun"]])+
+  seg("Suara hijaiyah","Otomatis memakai suara Arab bila terpasang di ponsel, pengucapannya jauh lebih tepat","hijVoice",[["auto","Otomatis"],["id","Indonesia saja"]])+
+  seg("Gambar dan kata","Contoh kata di bawah huruf","words",[[true,"Tampil"],[false,"Sembunyi"]])+
+  seg("Warna layar","Gelap lebih nyaman di mata","theme",[["auto","Otomatis"],["light","Terang"],["dark","Gelap"]])+
+  seg("Bantuan saat latihan","Pilihan salah memudar setelah dua kali meleset","helpQuiz",[[true,"Nyala"],[false,"Mati"]])+
+  seg("Perintah di tahap Sama dan Pasang","Menyebut nama yang dicari, atau perintah saja agar anak mencocokkan sendiri","askName",[["sebut","Sebut namanya"],["singkat","Perintah saja"]])+
+  seg("Pilihan saat latihan","Mulai dari 2 pilihan","choices",[[2,"2"],[3,"3"],[4,"4"]])+
+  seg("Batas angka","Berlaku di Belajar, Menulis, Papan, dan Latihan","range",[[10,"1-10"],[20,"1-20"],[50,"1-50"],[100,"1-100"]])+
+  seg("Kunci saat menulis","Item berikutnya terbuka setelah yang ini selesai","writeLock",[[true,"Nyala"],[false,"Mati"]])+
+  seg("Ketelitian menulis","Longgar untuk yang baru belajar memegang pensil","writeLevel",[["longgar","Longgar"],["sedang","Sedang"],["teliti","Teliti"]])+
+  seg("Bantuan menulis","Otomatis: bantuan menyusut setelah 6 dan 14 item selesai","writeGuide",[["otomatis","Otomatis"],["penuh","Penuh"],["garis","Garis"],["samar","Samar"]])+
+  '<div class="setting"><div class="lbl">Tes suara</div><div class="hint" id="tts-status">'+esc(ttsStatus())+'</div>'+
+  '<div class="seg"><button data-act="test-tts">Ucapkan "a, be, ce"</button>'+
+  '<button data-act="cek-bahasa">Cek bahasa suara</button></div></div>'+
+  '<div class="setting"><div class="lbl">Progres menulis</div><div class="hint">Huruf besar '+cnt("upper")+
+  ' dari 26, huruf kecil '+cnt("lower")+' dari 26, hijaiyah '+cnt("hijaiyah")+' dari '+HIJAIYAH.length+', angka '+cnt("num")+', bentuk '+cnt("shape")+' dari 8</div>'+
+  '<div class="seg"><button data-act="reset-write">Ulang dari awal</button></div></div>'+
+  '<div class="setting"><div class="lbl">Bintang</div><div class="hint">Terkumpul '+S.stars+' bintang</div>'+
+  '<div class="seg"><button data-act="reset-stars">Mulai dari nol</button></div></div>'+
+  '<p class="note">Pasang di layar utama lewat menu browser agar bisa dibuka tanpa internet.</p>';
+}
+function seg(lbl,hint,key,opts){
+  var h='<div class="setting"><div class="lbl">'+lbl+'</div><div class="hint">'+hint+'</div><div class="seg'+(opts.length>3?" small":"")+'">';
+  for(var i=0;i<opts.length;i++){
+    var v=opts[i][0];
+    h+='<button data-act="set" data-key="'+key+'" data-val="'+v+'" aria-pressed="'+(S[key]===v)+'">'+opts[i][1]+'</button>';
+  }
+  return h+'</div></div>';
+}
+
+/* ===================== PASANG APLIKASI =====================
+   Chrome menawarkan dialog pasang lewat beforeinstallprompt. Kejadian itu
+   kita tahan, lalu dimunculkan sendiri saat tombol ditekan, supaya orang
+   tidak perlu tahu letak menu titik tiga.                              */
+
+var bipEvent=null;
+window.addEventListener("beforeinstallprompt",function(e){
+  e.preventDefault();
+  bipEvent=e;
+  if(V.screen==="home") render();
+});
+window.addEventListener("appinstalled",function(){
+  bipEvent=null;
+  if(V.screen==="home") render();
+});
+function sudahTerpasang(){
+  try{
+    if(window.matchMedia&&window.matchMedia("(display-mode: standalone)").matches) return true;
+    if(navigator.standalone===true) return true;
+  }catch(e){}
+  return false;
+}
+function iOS(){ return /iphone|ipad|ipod/i.test(navigator.userAgent||""); }
+function bisaPasang(){ return !sudahTerpasang() && (bipEvent || iOS()); }
+
+function pasangAplikasi(){
+  if(bipEvent){
+    var dp=bipEvent; bipEvent=null;
+    try{
+      dp.prompt();
+      if(dp.userChoice&&dp.userChoice.then){
+        dp.userChoice.then(function(r){
+          /* kalau ditolak, tawarannya disimpan lagi untuk lain kali */
+          if(!r||r.outcome!=="accepted") bipEvent=dp;
+          if(V.screen==="home") render();
+        });
+      }
+    }catch(e){ bipEvent=dp; caraPasang(); }
+    return;
+  }
+  caraPasang();
+}
+function caraPasang(){
+  if(document.getElementById("ov")) return;
+  var langkah = iOS()
+    ? '<li>Tekan tombol Bagikan di bawah layar, lambangnya kotak dengan panah ke atas.</li>'+
+      '<li>Gulir ke bawah, pilih "Tambahkan ke Layar Utama".</li>'+
+      '<li>Tekan Tambah.</li>'
+    : '<li>Tekan menu titik tiga di pojok kanan atas.</li>'+
+      '<li>Pilih "Tambahkan ke Layar utama" atau "Install aplikasi".</li>'+
+      '<li>Tekan Pasang.</li>';
+  var wrap=document.createElement("div");
+  wrap.innerHTML='<div class="ov" id="ov"><div class="dlg" role="dialog" aria-modal="true">'+
+    '<h3>Memasang di layar utama</h3>'+
+    '<p>Setelah dipasang, aplikasi punya ikon sendiri dan bisa dibuka tanpa internet.</p>'+
+    '<ol>'+langkah+'</ol>'+
+    '<p class="kecil">Kalau halaman ini dibuka dari dalam aplikasi lain, misalnya WhatsApp '+
+    'atau Facebook, pemasangan tidak tersedia. Buka dulu lewat '+(iOS()?"Safari":"Chrome")+'.</p>'+
+    '<button class="dlgbtn utama" data-dlg="tutup">Mengerti</button>'+
+    '</div></div>';
+  var ov=wrap.firstChild;
+  document.body.appendChild(ov);
+  ov.addEventListener("click",function(e){
+    if(e.target===ov||e.target.closest("[data-dlg]")) closeNotice();
+  });
+}
+
+/* ============== PEMBERITAHUAN BAHASA SUARA ==============
+   Muncul saat aplikasi dibuka bila ponsel belum punya suara Bahasa
+   Indonesia. Hanya di beranda, tidak pernah menyela anak yang sedang
+   mengerjakan sesuatu.                                              */
+
+var noticeShown=false;
+
+function voiceNoticeHTML(){
+  var langs=voiceLangs(), v=idVoice(), i;
+  var daftar="";
+  if(!voices.length) daftar="Belum terbaca oleh aplikasi.";
+  else{
+    var nm=[];
+    for(i=0;i<langs.length&&i<6;i++) nm.push(langName(langs[i]));
+    daftar=nm.join(", ");
+    if(langs.length>6) daftar+=", dan "+(langs.length-6)+" lainnya";
+  }
+  var h='<div class="ov" id="ov"><div class="dlg" role="dialog" aria-modal="true">'+
+  '<h3>Suara belum Bahasa Indonesia</h3>'+
+  '<div class="kondisi"><b>Kondisi ponsel ini sekarang</b>'+
+  'Suara yang terpasang: '+esc(daftar)+'<br>'+
+  'Bahasa Indonesia: <span class="'+(v?"good":"bad")+'">'+(v?"tersedia":"belum ada")+'</span></div>'+
+  '<p>Tanpa suara Bahasa Indonesia, mesin asing akan membaca huruf B jadi '+
+  '"bi" dan C jadi "si". Anak bisa menghafal nama huruf yang keliru, '+
+  'jadi untuk sementara suaranya aplikasi matikan.</p>'+
+  '<p><b>Cara memasangnya, sekali saja:</b></p><ol>'+
+  '<li>Buka Setelan ponsel.</li>'+
+  '<li>Cari "Teks ke ucapan". Letaknya biasanya di dalam Aksesibilitas, atau Bahasa dan masukan, atau Manajemen umum.</li>'+
+  '<li>Pastikan mesin yang dipakai Google Text-to-Speech.</li>'+
+  '<li>Buka Pasang data suara, pilih Bahasa Indonesia, lalu unduh.</li>'+
+  '<li>Kembali ke sini dan tekan Cek lagi.</li>'+
+  '</ol>'+
+  '<button class="dlgbtn utama" data-dlg="cek">Sudah saya pasang, cek lagi</button>'+
+  '<button class="dlgbtn" data-dlg="any">Pakai suara apa pun dulu</button>'+
+  '<button class="dlgbtn" data-dlg="tutup">Nanti saja</button>'+
+  '<button class="dlgbtn sunyi" data-dlg="jangan">Jangan tampilkan lagi</button>'+
+  '</div></div>';
+  return h;
+}
+function showVoiceNotice(paksa){
+  if(document.getElementById("ov")) return;
+  if(!paksa){
+    if(noticeShown||S.ttsHideNotice||!S.sound||!TTS) return;
+    if(V.screen!=="home") return;
+    if(idVoice()) return;
+  }
+  noticeShown=true;
+  var wrap=document.createElement("div");
+  wrap.innerHTML=voiceNoticeHTML();
+  var ov=wrap.firstChild;
+  document.body.appendChild(ov);
+  ov.addEventListener("click",function(e){
+    var b=e.target.closest("[data-dlg]");
+    if(!b){ if(e.target===ov) closeNotice(); return; }
+    var a=b.getAttribute("data-dlg");
+    if(a==="cek"){
+      loadVoices();
+      closeNotice();
+      if(idVoice()){ speak("a, be, ce","ah, beh, cheh"); }
+      else { noticeShown=false; setTimeout(function(){showVoiceNotice(true);},400); }
+      return;
+    }
+    if(a==="any"){ S.voiceMode="any"; save(); closeNotice(); speak("a, be, ce","ah, beh, cheh"); return; }
+    if(a==="jangan"){ S.ttsHideNotice=true; save(); closeNotice(); return; }
+    closeNotice();
+  });
+}
+function closeNotice(){
+  var ov=document.getElementById("ov");
+  if(ov&&ov.parentNode) ov.parentNode.removeChild(ov);
+}
+
+/* ===================== INTERAKSI ===================== */
+
+main.addEventListener("click",function(e){
+  var b=e.target.closest("[data-act]"); if(!b) return;
+  var a=b.getAttribute("data-act"), list;
+  unlockTTS();
+
+  if(a==="test-tts"){
+    loadVoices(); speak("a, be, ce","ah, beh, cheh");
+    var stt=document.getElementById("tts-status");
+    setTimeout(function(){ if(stt) stt.textContent=ttsStatus(); },900);
+    return;
+  }
+  if(a==="go"){
+    V.screen="topic"; V.topic=b.getAttribute("data-topic");
+    V.tab=TOPICS[V.topic].tabs[0]; V.idx=0; V.q=null; V.streak=0;
+    render(); if(V.tab==="belajar") sayCurrent(); else if(V.tab==="latihan") askQ();
+    return;
+  }
+  if(a==="go-set"){ V.screen="set"; render(); return; }
+  if(a==="go-about"){ V.screen="about"; render(); return; }
+  if(a==="cek-bahasa"){ loadVoices(); showVoiceNotice(true); return; }
+  if(a==="install"){ if(sudahTerpasang()) return; pasangAplikasi(); return; }
+  if(a==="tab"){
+    V.tab=b.getAttribute("data-tab");
+    if(V.tab==="latihan"){V.q=null;V.streak=0;}
+    render();
+    if(V.tab==="latihan") askQ(); else if(V.tab==="belajar") sayCurrent();
+    return;
+  }
+  if(a==="stage"){ S.stage=b.getAttribute("data-v"); save(); V.q=null; render(); askQ(); return; }
+  if(a==="prev"){ if(V.idx>0){V.idx--; render(); sayCurrent();} return; }
+  if(a==="next"){
+    list=items();
+    if(V.tab==="tulis"&&S.writeLock&&!isWritten()){
+      setStatus("Selesaikan dulu "+kindWord()+" "+namaOf(curKey()),false); return;
+    }
+    if(V.idx<list.length-1){V.idx++; render(); sayCurrent();}
+    return;
+  }
+  if(a==="say"){ sayCurrent(); return; }
+  if(a==="clear"){ clearPad(); return; }
+  if(a==="say-q"){ askQ(); return; }
+  if(a==="skip"){ newQuestion(); render(); askQ(); return; }
+  if(a==="answer"){ answer(b); return; }
+  if(a==="set"){
+    var key=b.getAttribute("data-key"), val=b.getAttribute("data-val");
+    if(val==="true") val=true; else if(val==="false") val=false;
+    else if(/^\d+$/.test(val)) val=parseInt(val,10);
+    S[key]=val; save(); applyTheme();
+    if(key==="range"){V.idx=0;V.q=null;}
+    render(); return;
+  }
+  if(a==="reset-stars"){ S.stars=0; save(); render(); return; }
+  if(a==="reset-write"){ S.done={}; save(); render(); return; }
+});
+back.addEventListener("click",function(){ V.screen="home"; render(); });
+gear.addEventListener("click",function(){ V.screen="set"; render(); });
+
+function sayCurrent(){
+  if(V.tab==="latihan"||kind()==="pattern") return;
+  var pr=sayPair(items()[V.idx]); speak(pr[0],pr[1],pr[2]);
+}
+/* Perintah soal diucapkan penuh, bukan cuma nama hurufnya,
+   karena anak yang belum bisa membaca tidak tahu harus apa. */
+function askQ(){
+  if(!V.q) return;
+  if(kind()==="pattern"){ speak("apa yang muncul berikutnya","what comes next"); return; }
+
+  var pr=sayPair(V.q.target), kw=kindWord();
+  var awal = S.stage==="samakan"    ? "cari yang sama, "
+           : S.stage==="pasangkan"  ? "cari pasangannya, "
+           : "mana ";
+  /* Di tahap Sama dan Pasang, nama yang dicari ikut disebut supaya anak
+     yang belum bisa membaca tetap tahu sedang mencari apa. Bisa dimatikan
+     lewat Pengaturan bila ingin anak benar-benar mencocokkan sendiri. */
+  if(S.stage!=="tunjuk"&&S.askName==="singkat"){
+    speak(awal.replace(", ",""),awal.replace(", ",""));
+    return;
+  }
+  var vid=idVoice();
+  var va=(pr[2]&&S.hijVoice!=="id")?arVoice():null;
+  if(va){
+    var parts=[];
+    if(vid) parts.push({text:awal+kw, voice:vid, lang:vid.lang});
+    else if(S.voiceMode==="any") parts.push({text:awal+kw, lang:"id-ID"});
+    parts.push({text:pr[2], voice:va, lang:va.lang});
+    speakSeq(parts);
+    return;
+  }
+  speak(awal+kw+" "+pr[0], awal+kw+" "+pr[1]);
+}
+
+var hash=(location.hash||"").replace("#","");
+if(TOPICS[hash]){ V.screen="topic"; V.topic=hash; V.tab=TOPICS[hash].tabs[0]; V.idx=0; }
+
+render();
+setTimeout(function(){ showVoiceNotice(false); },900);
+
+if("serviceWorker" in navigator){
+  window.addEventListener("load",function(){
+    try{ navigator.serviceWorker.register("sw.js").catch(function(){}); }catch(e){}
+  });
+}
+})();
+</script>
+</body>
+</html>
