@@ -1,0 +1,114 @@
+UJUNG JARI versi 3.2
+Aplikasi belajar huruf, huruf hijaiyah, angka, bentuk, warna, pola,
+profesi, dan buah untuk anak.
+
+====================================================================
+1. SATU HAL YANG WAJIB DIUBAH SEBELUM DIRILIS
+====================================================================
+Buka index.html dengan editor teks apa pun. Di bagian atas ada blok:
+
+  var APP={
+    nama   : "Ujung Jari",
+    versi  : "1.0",
+    email  : "emailkamu@contoh.com",     <-- GANTI INI
+    subjek : "Saran untuk Ujung Jari"
+  };
+
+Ganti alamat emailnya, simpan. Hanya satu tempat ini, tidak ada lagi.
+Kalau tidak diganti, tombol "Kirim email" di halaman Tentang akan
+mengarah ke alamat contoh yang tidak ada.
+
+====================================================================
+2. CARA DEPLOY
+====================================================================
+Pilih salah satu. index.html harus berada di akar (root), bukan di
+dalam subfolder.
+
+A. Netlify Drop (paling cepat, tanpa akun)
+   1. Buka app.netlify.com/drop
+   2. Seret FOLDER ini ke halaman tersebut
+   3. Dapat URL https://xxx.netlify.app
+
+B. GitHub Pages
+   1. Buat repo baru, unggah semua isi folder ini ke akar repo
+   2. Settings > Pages > Source: branch main, folder / (root)
+   3. Tunggu sekitar satu menit
+
+Lalu buka URL-nya di Chrome Android. Di beranda aplikasi akan muncul
+tombol "Pasang di layar utama", tinggal ditekan. Tombol itu hilang
+sendiri setelah aplikasi terpasang.
+
+Syarat tombol itu muncul: situs harus diakses lewat HTTPS (Netlify dan
+GitHub Pages sudah otomatis HTTPS) dan dibuka di Chrome, bukan di dalam
+browser bawaan aplikasi lain seperti WhatsApp. Di iPhone, Safari tidak
+menyediakan dialog pasang otomatis, jadi tombol itu menampilkan
+petunjuk manual lewat tombol Bagikan.
+
+====================================================================
+3. ISI FOLDER
+====================================================================
+index.html      kode aplikasi
+data/           gambar dan video, diambil hanya saat materinya dibuka
+                profesi.js, buah.js, kereta.js
+manifest.json   nama, ikon, mode layar penuh, pintasan
+sw.js           service worker, membuat aplikasi jalan tanpa internet
+icons/          ikon 192 dan 512, versi biasa dan maskable
+
+PENTING: folder data/ harus ikut diunggah. Tanpa itu aplikasi tetap
+jalan, tapi gambar profesi dan buah tidak muncul dan hadiah kereta
+kembali ke animasi sederhana.
+
+====================================================================
+4. KALAU NANTI MENGUBAH ISI APLIKASI
+====================================================================
+Setiap kali index.html diubah, naikkan nomor versi cache di sw.js:
+
+  const VERSION = "ujung-jari-v22";   ->   "ujung-jari-v23"
+
+Tanpa itu, perangkat yang sudah memasang akan terus memakai versi
+lama dari cache. Naikkan juga "versi" di blok APP pada index.html
+supaya nomor di halaman Tentang ikut berubah.
+
+====================================================================
+5. CATATAN
+====================================================================
+- Font Andika (huruf latin) dan Noto Naskh Arabic (huruf hijaiyah)
+  diambil dari Google Fonts. Pembukaan pertama perlu
+  internet sekali supaya font tersimpan di cache. Setelah itu
+  offline penuh. Kalau dibuka offline sebelum itu, tampilannya
+  memakai font bawaan sistem, fungsinya tetap normal.
+
+- Suara memakai mesin text-to-speech bawaan ponsel, bukan file audio
+  di dalam aplikasi. Di perangkat baru, cek dulu lewat
+  Pengaturan > Tes suara.
+
+  Kalau suara Bahasa Indonesia belum terpasang, aplikasi sengaja DIAM,
+  tidak memakai suara asing, supaya anak tidak menghafal nama huruf
+  yang keliru (mesin Inggris membaca B jadi "bi", bukan "be").
+  Cara memasangnya: Setelan ponsel > Teks ke ucapan (kadang di dalam
+  Aksesibilitas atau Bahasa dan masukan) > pilih mesin Google >
+  Pasang data suara > Bahasa Indonesia.
+
+  Saat aplikasi dibuka dan suara Indonesia belum ada, muncul kotak
+  pemberitahuan yang menampilkan bahasa suara apa saja yang terpasang
+  di ponsel itu, beserta langkah memasangnya. Kotak itu hanya muncul
+  di beranda, tidak pernah menyela anak yang sedang belajar, dan bisa
+  dipanggil kapan saja lewat Pengaturan > Cek bahasa suara.
+
+  Kalau sedang butuh bersuara sementara, ubah Pengaturan > Suara huruf
+  jadi "Suara apa pun".
+
+- Khusus huruf hijaiyah, aplikasi memakai suara Arab kalau ponsel
+  punya. Pengucapannya jauh lebih tepat daripada mesin Indonesia yang
+  dipaksa membaca "ghain" atau "qaf". Cara memasang: di layar
+  Teks ke ucapan yang sama, Pasang data suara, pilih Bahasa Arab.
+  Bahasa ponsel TIDAK perlu diubah, tetap Indonesia.
+  Kalau tidak mau memakai suara Arab, ubah Pengaturan >
+  Suara hijaiyah jadi "Indonesia saja". Bunyinya akan didekat-dekatkan, tapi tidak
+  seakurat suara Indonesia asli.
+
+- Aplikasi ini tidak mengirim data apa pun ke mana pun. Progres dan
+  setelan tersimpan di perangkat masing-masing (localStorage).
+  Tidak ada analitik, tidak ada iklan, tidak ada pendaftaran.
+  Karena itu jumlah pemakai tidak bisa diketahui. Masukan datang
+  lewat email saja.
