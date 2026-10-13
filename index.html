@@ -72,6 +72,7 @@ body[data-topic="num"]{--accent:#8d80b3}
 body[data-topic="hijaiyah"]{--accent:#5b9b8f}
 body[data-topic="profesi"]{--accent:#b07a52}
 body[data-topic="buah"]{--accent:#c06a5a}
+body[data-topic="kendaraan"]{--accent:#4a84a8}
 body[data-topic="shape"]{--accent:#c08a57}
 body[data-topic="color"]{--accent:#bd7d8e}
 body[data-topic="pattern"]{--accent:#5b8bb8}
@@ -212,9 +213,6 @@ canvas{display:block;width:100%;height:100%;touch-action:none}
   font-size:14px;min-height:44px;opacity:.45}
 .materi button[aria-pressed="true"]{background:var(--accent);color:#fff;font-weight:700;opacity:1}
 .note{color:var(--muted);font-size:14px;text-align:center;padding:10px 4px 0}
-.gagal{background:var(--surface);border:2px solid var(--star);border-radius:18px;
-  padding:14px;margin-bottom:12px;font-size:15px;flex:0 0 auto;text-align:center}
-.gagal .kecil{display:block;color:var(--muted);font-size:13px;margin-top:4px}
 .ov{position:fixed;inset:0;background:rgba(10,16,18,.55);display:grid;place-items:center;
   padding:18px;padding-top:calc(18px + env(safe-area-inset-top,0px));
   padding-bottom:calc(18px + env(safe-area-inset-bottom,0px));z-index:50}
@@ -279,6 +277,10 @@ canvas{display:block;width:100%;height:100%;touch-action:none}
 </header>
 <main id="main"></main>
 
+<script src="data/profesi.js"></script>
+<script src="data/buah.js"></script>
+<script src="data/kendaraan.js"></script>
+<script src="data/kereta.js"></script>
 <script>
 (function(){
 "use strict";
@@ -290,7 +292,7 @@ canvas{display:block;width:100%;height:100%;touch-action:none}
    ======================================================================= */
 var APP={
   nama   : "Ujung Jari",
-  versi  : "3.4",
+  versi  : "3.7",
   email  : "support.ujungjari@gmail.com",
   subjek : "Saran untuk Ujung Jari"
 };
@@ -392,11 +394,13 @@ function colorHex(id){for(var i=0;i<COLORS.length;i++) if(COLORS[i].id===id) ret
 
 /* Foto profesi: karya Ical sendiri, wajah anaknya, watermark Ujung Jari.
    Ditanam sebagai data URI supaya tetap satu berkas dan jalan offline. */
-if(!window.FOTO) window.FOTO={};
+if(!window.FOTO) window.FOTO={};   /* cadangan bila data/profesi.js tak terbaca */
 
 /* Gambar buah: karya Ical sendiri. Urutan dan nama mengikuti lembar acuannya. */
 if(!window.FOTO_BUAH) window.FOTO_BUAH={};
-var BUAH=["Apel", "Pisang", "Jeruk", "Anggur", "Semangka", "Stroberi", "Mangga", "Nanas", "Pepaya", "Ceri", "Durian", "Rambutan", "Buah Naga", "Alpukat", "Pir", "Kiwi", "Lemon", "Blueberry", "Kelapa", "Leci", "Jambu Biji", "Belimbing", "Kesemek", "Prem"];
+if(!window.FOTO_KENDARAAN) window.FOTO_KENDARAAN={};
+var KENDARAAN=["Mobil", "Bus", "Pesawat", "Kereta Api", "Sepeda", "Motor", "Perahu Layar", "Kapal", "Helikopter", "Truk", "Ambulans", "Mobil Pemadam", "Mobil Polisi", "Taksi", "Balon Udara", "Kereta Metro", "Kereta Whoosh", "Skuter", "Traktor", "Ekskavator", "Roket"];
+var BUAH=["Apel", "Pisang", "Jeruk", "Anggur", "Semangka", "Stroberi", "Mangga", "Nanas", "Pepaya", "Ceri", "Durian", "Rambutan", "Buah Naga", "Alpukat", "Pir", "Kiwi", "Lemon", "Blueberry", "Kelapa", "Leci", "Jambu Biji", "Belimbing", "Kesemek", "Plum"];
 var KULIT="#f0c6a0", RAMBUT="#3f332e", PUTIH="#fbfcfc", LOGAM="#9aa3a7";
 
 function topiSVG(t,c){
@@ -513,6 +517,7 @@ var TOPICS={
  color:{title:"Warna",kind:"color",tabs:["belajar","latihan"]},
  profesi:{title:"Profesi",kind:"profesi",tabs:["belajar","latihan"]},
  buah:{title:"Buah",kind:"buah",tabs:["belajar","latihan"]},
+ kendaraan:{title:"Kendaraan",kind:"kendaraan",tabs:["belajar","latihan"]},
  pattern:{title:"Pola",kind:"pattern",tabs:["latihan"]}
 };
 var TABNAME={belajar:"Belajar",tulis:"Menulis",latihan:"Latihan"};
@@ -618,7 +623,7 @@ function sayPair(x){
   if(t==="letter"){var u=String(x).toUpperCase();return [SAY[u],SAY_ALT[u]];}
   if(t==="hijaiyah"){var hh=hij(x);return [hh.say,hh.alt||hh.say,hh.ar];}
   if(t==="profesi"){var pp=prof(x);return [pp.say,pp.say];}
-  if(t==="buah"){var bb=String(x).toLowerCase();return [bb,bb];}
+  if(t==="buah"||t==="kendaraan"){var bb=String(x).toLowerCase();return [bb,bb];}
   if(t==="num") return [terbilang(x),terbilang(x)];
   return [String(x),String(x)];
 }
@@ -679,6 +684,7 @@ function items(){
   if(t==="color") return COLORS.map(function(c){return c.id;});
   if(t==="profesi") return PROFESI.map(function(x){return x.nama;});
   if(t==="buah") return BUAH.slice();
+  if(t==="kendaraan") return KENDARAAN.slice();
   return [];
 }
 function labelOf(x){
@@ -687,14 +693,14 @@ function labelOf(x){
   if(t==="num") return terbilang(x);
   if(t==="hijaiyah") return hij(x).say;
   if(t==="profesi") return prof(x).say;
-  if(t==="buah") return String(x).toLowerCase();
+  if(t==="buah"||t==="kendaraan") return String(x).toLowerCase();
   return String(x);
 }
 /* yang ditulis di layar saat menyebut sebuah item */
 function namaOf(x){ return kind()==="hijaiyah" ? hij(x).nama : String(x); }
 function kindWord(){
   var t=kind();
-  return t==="num"?"angka":t==="shape"?"bentuk":t==="color"?"warna":t==="profesi"?"profesi":t==="buah"?"buah":"huruf";
+  return t==="num"?"angka":t==="shape"?"bentuk":t==="color"?"warna":t==="profesi"?"profesi":t==="buah"?"buah":t==="kendaraan"?"kendaraan":"huruf";
 }
 function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
 
@@ -720,6 +726,10 @@ function visual(id,alt){
     if(alt||!FOTO_BUAH[id]) return '<span class="word">'+esc(id)+'</span>';
     return '<img class="foto" src="'+FOTO_BUAH[id]+'" alt="">';
   }
+  if(t==="kendaraan"){
+    if(alt||!FOTO_KENDARAAN[id]) return '<span class="word">'+esc(id)+'</span>';
+    return '<img class="foto" src="'+FOTO_KENDARAAN[id]+'" alt="">';
+  }
   if(t==="shape") return svgShape(id,alt?{outline:true}:{});
   if(t==="color") return '<span class="sw'+(alt?" round":"")+'" style="background:'+colorHex(id)+'"></span>';
   return "";
@@ -742,32 +752,6 @@ function miniObjects(n){
 }
 
 /* ===================== KERANGKA LAYAR ===================== */
-
-/* Gambar dan video tidak ikut di index.html supaya pembukaan pertama ringan.
-   Berkasnya baru diambil saat materinya dibuka, lalu tersimpan di cache. */
-var DATA={};
-function perluData(topic){
-  if(topic==="profesi") return "profesi";
-  if(topic==="buah") return "buah";
-  return null;
-}
-function muatData(nama,lalu){
-  if(!nama||DATA[nama]) return lalu();
-  var sc=document.createElement("script");
-  sc.src="data/"+nama+".js";
-  sc.onload=function(){ DATA[nama]=true; lalu(); };
-  sc.onerror=function(){ DATA[nama]="gagal"; lalu(); };   /* tetap jalan, gambar diganti teks */
-  document.head.appendChild(sc);
-}
-function muatVideo(){
-  if(DATA.kereta) return;
-  DATA.kereta="jalan";
-  var sc=document.createElement("script");
-  sc.src="data/kereta.js";
-  sc.onload=function(){ DATA.kereta=true; };
-  sc.onerror=function(){ DATA.kereta="gagal"; };
-  document.head.appendChild(sc);
-}
 
 var main=document.getElementById("main");
 var back=document.getElementById("back");
@@ -792,7 +776,7 @@ function render(){
 var KELOMPOK=[
  {judul:"Huruf dan Angka", isi:["upper","lower","num","hijaiyah"]},
  {judul:"Bentuk dan Warna", isi:["shape","color","pattern"]},
- {judul:"Dunia Sekitar",    isi:["profesi","buah"]}
+ {judul:"Dunia Sekitar",    isi:["profesi","buah","kendaraan"]}
 ];
 var KARTU={
  upper:["Aa","Huruf Besar","A sampai Z"],
@@ -803,9 +787,14 @@ var KARTU={
  color:["","Warna","Cocokkan lalu kenali"],
  pattern:["","Pola","Tebak yang berikutnya"],
  profesi:["","Profesi","Dokter, guru, masinis"],
- buah:["\uD83C\uDF4E","Buah","Apel, pisang, mangga"]
+ buah:["\uD83C\uDF4E","Buah","Apel, pisang, mangga"],
+ kendaraan:["\uD83D\uDE97","Kendaraan","Mobil, kereta, pesawat"]
 };
 function ikonKartu(t){
+  /* kendaraan memakai gambar mobil, dikecilkan oleh aturan .tile .bubble .foto */
+  if(t==="kendaraan") return FOTO_KENDARAAN["Mobil"]
+    ? '<img class="foto" src="'+FOTO_KENDARAAN["Mobil"]+'" alt="">'
+    : KARTU[t][0];
   if(t==="shape") return svgShape("segitiga");
   if(t==="color") return '<span class="sw" style="width:28px;height:28px;background:'+colorHex("merah")+'"></span>';
   if(t==="pattern") return svgShape("lingkaran");
@@ -817,10 +806,12 @@ function jumlahItem(t){
   if(t==="upper"||t==="lower") return 26;
   if(t==="num") return S.range||100;
   if(t==="hijaiyah") return HIJAIYAH.length;
+  if(t==="kendaraan") return KENDARAAN.length;
+  if(t==="buah") return BUAH.length;
   if(t==="shape") return SHAPES.length;
   return 0;
 }
-var TINT={upper:"#5f94a3",lower:"#6a9c77",num:"#8d80b3",hijaiyah:"#5b9b8f",profesi:"#b07a52",buah:"#c06a5a",shape:"#c08a57",color:"#bd7d8e",pattern:"#5b8bb8"};
+var TINT={upper:"#5f94a3",lower:"#6a9c77",num:"#8d80b3",hijaiyah:"#5b9b8f",profesi:"#b07a52",buah:"#c06a5a",kendaraan:"#4a84a8",shape:"#c08a57",color:"#bd7d8e",pattern:"#5b8bb8"};
 
 function viewHome(){
   var h='<div class="hero"><p>Belajar pelan-pelan, satu demi satu</p>'+
@@ -868,13 +859,6 @@ function viewTopic(){
     }
     h+='</div>';
   }
-  var perlu=perluData(V.topic);
-  if(perlu&&DATA[perlu]==="gagal"){
-    h+='<div class="gagal">Gambar belum bisa dimuat.<br>'+
-       '<span class="kecil">Berkas <b>data/'+perlu+'.js</b> tidak ditemukan di server. '+
-       'Pastikan folder <b>data</b> ikut diunggah bersama index.html.</span>'+
-       '<button class="dlgbtn" data-act="muat-ulang" data-nama="'+perlu+'">Coba muat lagi</button></div>';
-  }
   if(V.tab==="belajar") h+=viewLearn();
   else if(V.tab==="tulis") h+=viewWrite();
   else h+=viewQuiz();
@@ -892,7 +876,7 @@ function viewLearn(){
     if(S.words) h+='<div class="word"><span class="emoji">'+WORD[up][1]+'</span>'+WORD[up][0]+'</div>';
   }
   else if(t==="hijaiyah") h+='<div class="word">'+esc(hij(cur).nama)+'</div>';
-  else if(t==="profesi"||t==="buah") h+='<div class="word">'+esc(cur)+'</div>';
+  else if(t==="profesi"||t==="buah"||t==="kendaraan") h+='<div class="word">'+esc(cur)+'</div>';
   else h+='<div class="word">'+esc(cur)+'</div>';
   h+='</div><div class="counter">'+(V.idx+1)+' dari '+list.length+'</div></div>'+
   '<div class="controls">'+
@@ -920,7 +904,7 @@ var STAGES=[
 ];
 function stagesFor(){
   var t=kind();
-  if(t==="profesi"||t==="buah") return [STAGES[0],STAGES[2]];
+  if(t==="profesi"||t==="buah"||t==="kendaraan") return [STAGES[0],STAGES[2]];
   return STAGES;
 }
 function stageAktif(){
@@ -1083,14 +1067,6 @@ function level(){ return LEVELS[S.writeLevel]||LEVELS.longgar; }
 function curKey(){ return String(items()[V.idx]); }
 function isWritten(){ return !!doneMap(V.topic)[curKey()]; }
 function cnt(t){ var n=0,d=S.done[t]||{}; for(var k in d) n++; return n; }
-function statusData(){
-  var nama=["profesi","buah","kereta"], h=[];
-  for(var i=0;i<nama.length;i++){
-    var d=DATA[nama[i]];
-    h.push(nama[i]+": "+(d===true?"siap":d==="gagal"?"gagal dimuat":"belum diambil"));
-  }
-  return h.join(", ")+". Berkasnya ada di folder data, diambil saat materinya dibuka.";
-}
 function daftarMateri(){
   var h='<div class="materi">';
   for(var g=0;g<KELOMPOK.length;g++){
@@ -1382,7 +1358,6 @@ function viewSettings(){
   '<div class="setting"><div class="lbl">Materi yang ditampilkan</div>'+
   '<div class="hint">Sembunyikan yang belum dipakai supaya beranda tetap pendek</div>'+
   daftarMateri()+'</div>'+
-  '<div class="setting"><div class="lbl">Berkas gambar</div><div class="hint">'+statusData()+'</div></div>'+
   '<div class="setting"><div class="lbl">Tes suara</div><div class="hint" id="tts-status">'+esc(ttsStatus())+'</div>'+
   '<div class="seg"><button data-act="test-tts">Ucapkan "a, be, ce"</button>'+
   '<button data-act="cek-bahasa">Cek bahasa suara</button></div></div>'+
@@ -1688,29 +1663,13 @@ main.addEventListener("click",function(e){
     return;
   }
   if(a==="go"){
-    var topik=b.getAttribute("data-topic");
-    var perlu=perluData(topik);
-    var buka=function(){
-      V.screen="topic"; V.topic=topik;
-      V.tab=TOPICS[topik].tabs[0]; V.idx=0; V.q=null; V.streak=0;
-      render(); if(V.tab==="belajar") sayCurrent(); else if(V.tab==="latihan") askQ();
-    };
-    if(perlu&&!DATA[perlu]){
-      titleEl.textContent=TOPICS[topik].title;
-      main.innerHTML='<p class="note" style="margin:auto">Sebentar, menyiapkan gambar</p>';
-      muatData(perlu,buka);
-    } else buka();
+    V.screen="topic"; V.topic=b.getAttribute("data-topic");
+    V.tab=TOPICS[V.topic].tabs[0]; V.idx=0; V.q=null; V.streak=0;
+    render(); if(V.tab==="belajar") sayCurrent(); else if(V.tab==="latihan") askQ();
     return;
   }
   if(a==="go-set"){ V.screen="set"; render(); return; }
   if(a==="go-about"){ V.screen="about"; render(); return; }
-  if(a==="muat-ulang"){
-    var nm=b.getAttribute("data-nama");
-    DATA[nm]=false;
-    main.innerHTML='<p class="note" style="margin:auto">Mencoba lagi</p>';
-    muatData(nm,function(){ render(); });
-    return;
-  }
   if(a==="cek-bahasa"){ loadVoices(); showVoiceNotice(true); return; }
   if(a==="install"){ if(sudahTerpasang()) return; pasangAplikasi(); return; }
   if(a==="tab"){
@@ -1757,7 +1716,16 @@ gear.addEventListener("click",function(){ V.screen="set"; render(); });
 
 function sayCurrent(){
   if(V.tab==="latihan"||kind()==="pattern") return;
-  var pr=sayPair(items()[V.idx]); speak(pr[0],pr[1],pr[2]);
+  var cur=items()[V.idx], pr=sayPair(cur);
+  /* Di layar Belajar huruf, nama huruf disambung dengan contoh katanya,
+     "a untuk apel", supaya anak mengaitkan huruf dengan kata yang dikenal.
+     Hanya bila contoh katanya memang ditampilkan di layar. */
+  if(V.tab==="belajar"&&kind()==="letter"&&S.words){
+    var k=WORD[String(cur).toUpperCase()][0];
+    speak(pr[0]+" untuk "+k, pr[1]+" oon-took "+k);
+    return;
+  }
+  speak(pr[0],pr[1],pr[2]);
 }
 /* Perintah soal diucapkan penuh, bukan cuma nama hurufnya,
    karena anak yang belum bisa membaca tidak tahu harus apa. */
@@ -1794,7 +1762,6 @@ if(TOPICS[hash]){ V.screen="topic"; V.topic=hash; V.tab=TOPICS[hash].tabs[0]; V.
 
 render();
 setTimeout(function(){ showVoiceNotice(false); },900);
-setTimeout(muatVideo,2500);
 
 if("serviceWorker" in navigator){
   window.addEventListener("load",function(){

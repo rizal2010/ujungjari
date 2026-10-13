@@ -1,6 +1,6 @@
 /* Service worker: membuat aplikasi tetap jalan tanpa internet.
    Naikkan VERSION setiap kali index.html diubah, supaya cache lama dibuang. */
-const VERSION = "ujung-jari-v24";
+const VERSION = "ujung-jari-v27";
 const SHELL = VERSION + "-shell";
 const FONTS = VERSION + "-fonts";
 
@@ -15,10 +15,14 @@ const ASSETS = [
   "./icons/apple-touch-icon.png",
   "./data/profesi.js",
   "./data/buah.js",
-  "./data/kereta.js"
+  "./data/kereta.js",
+  "./data/kendaraan.js"
 ];
 
 self.addEventListener("install", (e) => {
+  /* addAll gagal total bila satu berkas saja tidak terambil, dan itu memang
+     yang diinginkan: aplikasi hanya dianggap siap offline kalau SEMUA
+     gambar sudah tersimpan. */
   e.waitUntil(
     caches.open(SHELL)
       .then((c) => c.addAll(ASSETS))

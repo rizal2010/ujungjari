@@ -1,22 +1,21 @@
-UJUNG JARI versi 3.2
+UJUNG JARI versi 3.7
 Aplikasi belajar huruf, huruf hijaiyah, angka, bentuk, warna, pola,
-profesi, dan buah untuk anak.
+profesi, buah, dan kendaraan untuk anak.
 
 ====================================================================
-1. SATU HAL YANG WAJIB DIUBAH SEBELUM DIRILIS
+1. ALAMAT EMAIL UNTUK SARAN
 ====================================================================
 Buka index.html dengan editor teks apa pun. Di bagian atas ada blok:
 
   var APP={
     nama   : "Ujung Jari",
-    versi  : "1.0",
-    email  : "emailkamu@contoh.com",     <-- GANTI INI
+    versi  : "3.7",
+    email  : "support.ujungjari@gmail.com",
     subjek : "Saran untuk Ujung Jari"
   };
 
-Ganti alamat emailnya, simpan. Hanya satu tempat ini, tidak ada lagi.
-Kalau tidak diganti, tombol "Kirim email" di halaman Tentang akan
-mengarah ke alamat contoh yang tidak ada.
+Alamat email sudah terisi. Kalau mau diganti, ubah di sini saja,
+tidak ada tempat lain.
 
 ====================================================================
 2. CARA DEPLOY
@@ -48,22 +47,22 @@ petunjuk manual lewat tombol Bagikan.
 3. ISI FOLDER
 ====================================================================
 index.html      kode aplikasi
-data/           gambar dan video, diambil hanya saat materinya dibuka
-                profesi.js, buah.js, kereta.js
+data/           gambar dan video, semuanya dimuat saat aplikasi dibuka
+                profesi.js, buah.js, kendaraan.js, kereta.js
 manifest.json   nama, ikon, mode layar penuh, pintasan
 sw.js           service worker, membuat aplikasi jalan tanpa internet
 icons/          ikon 192 dan 512, versi biasa dan maskable
 
-PENTING: folder data/ harus ikut diunggah. Tanpa itu aplikasi tetap
-jalan, tapi gambar profesi dan buah tidak muncul dan hadiah kereta
-kembali ke animasi sederhana.
+PENTING: folder data/ harus ikut diunggah. Semua berkas di dalamnya
+dimuat sekali saat aplikasi dibuka, lalu disimpan service worker,
+jadi setelah pembukaan pertama semua gambar tersedia tanpa internet.
 
 ====================================================================
 4. KALAU NANTI MENGUBAH ISI APLIKASI
 ====================================================================
 Setiap kali index.html diubah, naikkan nomor versi cache di sw.js:
 
-  const VERSION = "ujung-jari-v22";   ->   "ujung-jari-v23"
+  const VERSION = "ujung-jari-v27";   ->   "ujung-jari-v28"
 
 Tanpa itu, perangkat yang sudah memasang akan terus memakai versi
 lama dari cache. Naikkan juga "versi" di blok APP pada index.html
