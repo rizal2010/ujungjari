@@ -1,6 +1,6 @@
-UJUNG JARI versi 3.7
+UJUNG JARI versi 4.1
 Aplikasi belajar huruf, huruf hijaiyah, angka, bentuk, warna, pola,
-profesi, buah, dan kendaraan untuk anak.
+profesi, buah, kendaraan, dan kegiatan sehari-hari untuk anak.
 
 ====================================================================
 1. ALAMAT EMAIL UNTUK SARAN
@@ -9,7 +9,7 @@ Buka index.html dengan editor teks apa pun. Di bagian atas ada blok:
 
   var APP={
     nama   : "Ujung Jari",
-    versi  : "3.7",
+    versi  : "4.1",
     email  : "support.ujungjari@gmail.com",
     subjek : "Saran untuk Ujung Jari"
   };
@@ -48,7 +48,7 @@ petunjuk manual lewat tombol Bagikan.
 ====================================================================
 index.html      kode aplikasi
 data/           gambar dan video, semuanya dimuat saat aplikasi dibuka
-                profesi.js, buah.js, kendaraan.js, kereta.js
+                profesi.js, buah.js, kendaraan.js, aktivitas.js, kereta.js
 manifest.json   nama, ikon, mode layar penuh, pintasan
 sw.js           service worker, membuat aplikasi jalan tanpa internet
 icons/          ikon 192 dan 512, versi biasa dan maskable
@@ -62,7 +62,7 @@ jadi setelah pembukaan pertama semua gambar tersedia tanpa internet.
 ====================================================================
 Setiap kali index.html diubah, naikkan nomor versi cache di sw.js:
 
-  const VERSION = "ujung-jari-v27";   ->   "ujung-jari-v28"
+  const VERSION = "ujung-jari-v31";   ->   "ujung-jari-v32"
 
 Tanpa itu, perangkat yang sudah memasang akan terus memakai versi
 lama dari cache. Naikkan juga "versi" di blok APP pada index.html
@@ -105,6 +105,16 @@ supaya nomor di halaman Tentang ikut berubah.
   Kalau tidak mau memakai suara Arab, ubah Pengaturan >
   Suara hijaiyah jadi "Indonesia saja". Bunyinya akan didekat-dekatkan, tapi tidak
   seakurat suara Indonesia asli.
+
+- Saat Menulis, coretan hanya membekas di dalam huruf, seperti stensil.
+  Bidang huruf diberi semburat tipis supaya anak melihat di mana ia
+  boleh menulis. Kalau anak sudah lancar dan perlu dilepas, ubah
+  Pengaturan > Batas menulis jadi "Bebas".
+
+  Tingkat Ketelitian menulis menentukan seberapa penuh huruf harus
+  tertutup: Longgar cukup digaris sekali, Sedang perlu ditebalkan,
+  Teliti hampir harus diwarnai penuh. Untuk anak yang baru mulai,
+  pakai Longgar.
 
 - Aplikasi ini tidak mengirim data apa pun ke mana pun. Progres dan
   setelan tersimpan di perangkat masing-masing (localStorage).

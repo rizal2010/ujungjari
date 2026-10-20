@@ -1,6 +1,6 @@
 /* Service worker: membuat aplikasi tetap jalan tanpa internet.
    Naikkan VERSION setiap kali index.html diubah, supaya cache lama dibuang. */
-const VERSION = "ujung-jari-v27";
+const VERSION = "ujung-jari-v31";
 const SHELL = VERSION + "-shell";
 const FONTS = VERSION + "-fonts";
 
@@ -16,7 +16,8 @@ const ASSETS = [
   "./data/profesi.js",
   "./data/buah.js",
   "./data/kereta.js",
-  "./data/kendaraan.js"
+  "./data/kendaraan.js",
+  "./data/aktivitas.js"
 ];
 
 self.addEventListener("install", (e) => {

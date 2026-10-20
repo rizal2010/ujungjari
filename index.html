@@ -73,6 +73,7 @@ body[data-topic="hijaiyah"]{--accent:#5b9b8f}
 body[data-topic="profesi"]{--accent:#b07a52}
 body[data-topic="buah"]{--accent:#c06a5a}
 body[data-topic="kendaraan"]{--accent:#4a84a8}
+body[data-topic="aktivitas"]{--accent:#7b8f5e}
 body[data-topic="shape"]{--accent:#c08a57}
 body[data-topic="color"]{--accent:#bd7d8e}
 body[data-topic="pattern"]{--accent:#5b8bb8}
@@ -280,6 +281,7 @@ canvas{display:block;width:100%;height:100%;touch-action:none}
 <script src="data/profesi.js"></script>
 <script src="data/buah.js"></script>
 <script src="data/kendaraan.js"></script>
+<script src="data/aktivitas.js"></script>
 <script src="data/kereta.js"></script>
 <script>
 (function(){
@@ -292,7 +294,7 @@ canvas{display:block;width:100%;height:100%;touch-action:none}
    ======================================================================= */
 var APP={
   nama   : "Ujung Jari",
-  versi  : "3.7",
+  versi  : "4.1",
   email  : "support.ujungjari@gmail.com",
   subjek : "Saran untuk Ujung Jari"
 };
@@ -399,6 +401,8 @@ if(!window.FOTO) window.FOTO={};   /* cadangan bila data/profesi.js tak terbaca 
 /* Gambar buah: karya Ical sendiri. Urutan dan nama mengikuti lembar acuannya. */
 if(!window.FOTO_BUAH) window.FOTO_BUAH={};
 if(!window.FOTO_KENDARAAN) window.FOTO_KENDARAAN={};
+if(!window.FOTO_AKTIVITAS) window.FOTO_AKTIVITAS={};
+var AKTIVITAS=["Bangun Tidur", "Merapikan Kasur", "Sikat Gigi", "Cuci Tangan", "Mandi", "Sisir Rambut", "Pakai Baju", "Pakai Sepatu", "Makan", "Minum", "Baca Buku", "Menulis", "Menggambar", "Main Balok", "Main Bola", "Rapikan Mainan", "Menyapu", "Menyiram Tanaman", "Buang Sampah", "Berdoa", "Pergi Sekolah", "Pulang Sekolah", "Bermain Bersama", "Tidur"];
 var KENDARAAN=["Mobil", "Bus", "Pesawat", "Kereta Api", "Sepeda", "Motor", "Perahu Layar", "Kapal", "Helikopter", "Truk", "Ambulans", "Mobil Pemadam", "Mobil Polisi", "Taksi", "Balon Udara", "Kereta Metro", "Kereta Whoosh", "Skuter", "Traktor", "Ekskavator", "Roket"];
 var BUAH=["Apel", "Pisang", "Jeruk", "Anggur", "Semangka", "Stroberi", "Mangga", "Nanas", "Pepaya", "Ceri", "Durian", "Rambutan", "Buah Naga", "Alpukat", "Pir", "Kiwi", "Lemon", "Blueberry", "Kelapa", "Leci", "Jambu Biji", "Belimbing", "Kesemek", "Plum"];
 var KULIT="#f0c6a0", RAMBUT="#3f332e", PUTIH="#fbfcfc", LOGAM="#9aa3a7";
@@ -518,6 +522,7 @@ var TOPICS={
  profesi:{title:"Profesi",kind:"profesi",tabs:["belajar","latihan"]},
  buah:{title:"Buah",kind:"buah",tabs:["belajar","latihan"]},
  kendaraan:{title:"Kendaraan",kind:"kendaraan",tabs:["belajar","latihan"]},
+ aktivitas:{title:"Kegiatan",kind:"aktivitas",tabs:["belajar","latihan"]},
  pattern:{title:"Pola",kind:"pattern",tabs:["latihan"]}
 };
 var TABNAME={belajar:"Belajar",tulis:"Menulis",latihan:"Latihan"};
@@ -526,7 +531,7 @@ var TABNAME={belajar:"Belajar",tulis:"Menulis",latihan:"Latihan"};
 
 var KEY="belajar-huruf-angka:v1";
 var S={sound:true,motion:true,words:true,choices:2,range:10,theme:"auto",stars:0,
-       writeLock:true,writeLevel:"longgar",writeGuide:"otomatis",
+       writeLock:true,writeLevel:"longgar",writeGuide:"otomatis",stensil:"dalam",
        stage:"samakan",helpQuiz:true,voiceMode:"id",hijVoice:"auto",sembunyi:{},askName:"sebut",reward:"kereta",gambar:"foto",rewardSound:true,ttsHideNotice:false,done:{}};
 try{var raw=localStorage.getItem(KEY); if(raw){var p=JSON.parse(raw); for(var k in S){if(p&&p[k]!==undefined)S[k]=p[k];}}}catch(e){}
 if(!S.done||typeof S.done!=="object") S.done={};
@@ -623,7 +628,7 @@ function sayPair(x){
   if(t==="letter"){var u=String(x).toUpperCase();return [SAY[u],SAY_ALT[u]];}
   if(t==="hijaiyah"){var hh=hij(x);return [hh.say,hh.alt||hh.say,hh.ar];}
   if(t==="profesi"){var pp=prof(x);return [pp.say,pp.say];}
-  if(t==="buah"||t==="kendaraan"){var bb=String(x).toLowerCase();return [bb,bb];}
+  if(t==="buah"||t==="kendaraan"||t==="aktivitas"){var bb=String(x).toLowerCase();return [bb,bb];}
   if(t==="num") return [terbilang(x),terbilang(x)];
   return [String(x),String(x)];
 }
@@ -685,6 +690,7 @@ function items(){
   if(t==="profesi") return PROFESI.map(function(x){return x.nama;});
   if(t==="buah") return BUAH.slice();
   if(t==="kendaraan") return KENDARAAN.slice();
+  if(t==="aktivitas") return AKTIVITAS.slice();
   return [];
 }
 function labelOf(x){
@@ -693,14 +699,14 @@ function labelOf(x){
   if(t==="num") return terbilang(x);
   if(t==="hijaiyah") return hij(x).say;
   if(t==="profesi") return prof(x).say;
-  if(t==="buah"||t==="kendaraan") return String(x).toLowerCase();
+  if(t==="buah"||t==="kendaraan"||t==="aktivitas") return String(x).toLowerCase();
   return String(x);
 }
 /* yang ditulis di layar saat menyebut sebuah item */
 function namaOf(x){ return kind()==="hijaiyah" ? hij(x).nama : String(x); }
 function kindWord(){
   var t=kind();
-  return t==="num"?"angka":t==="shape"?"bentuk":t==="color"?"warna":t==="profesi"?"profesi":t==="buah"?"buah":t==="kendaraan"?"kendaraan":"huruf";
+  return t==="num"?"angka":t==="shape"?"bentuk":t==="color"?"warna":t==="profesi"?"profesi":t==="buah"?"buah":t==="kendaraan"?"kendaraan":t==="aktivitas"?"kegiatan":"huruf";
 }
 function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
 
@@ -729,6 +735,10 @@ function visual(id,alt){
   if(t==="kendaraan"){
     if(alt||!FOTO_KENDARAAN[id]) return '<span class="word">'+esc(id)+'</span>';
     return '<img class="foto" src="'+FOTO_KENDARAAN[id]+'" alt="">';
+  }
+  if(t==="aktivitas"){
+    if(alt||!FOTO_AKTIVITAS[id]) return '<span class="word">'+esc(id)+'</span>';
+    return '<img class="foto" src="'+FOTO_AKTIVITAS[id]+'" alt="">';
   }
   if(t==="shape") return svgShape(id,alt?{outline:true}:{});
   if(t==="color") return '<span class="sw'+(alt?" round":"")+'" style="background:'+colorHex(id)+'"></span>';
@@ -776,7 +786,8 @@ function render(){
 var KELOMPOK=[
  {judul:"Huruf dan Angka", isi:["upper","lower","num","hijaiyah"]},
  {judul:"Bentuk dan Warna", isi:["shape","color","pattern"]},
- {judul:"Dunia Sekitar",    isi:["profesi","buah","kendaraan"]}
+ {judul:"Dunia Sekitar",    isi:["profesi","buah","kendaraan"]},
+ {judul:"Kegiatan",         isi:["aktivitas"]}
 ];
 var KARTU={
  upper:["Aa","Huruf Besar","A sampai Z"],
@@ -788,12 +799,16 @@ var KARTU={
  pattern:["","Pola","Tebak yang berikutnya"],
  profesi:["","Profesi","Dokter, guru, masinis"],
  buah:["\uD83C\uDF4E","Buah","Apel, pisang, mangga"],
- kendaraan:["\uD83D\uDE97","Kendaraan","Mobil, kereta, pesawat"]
+ kendaraan:["\uD83D\uDE97","Kendaraan","Mobil, kereta, pesawat"],
+ aktivitas:["\uD83E\uDDF8","Kegiatan","Bangun tidur, mandi, makan"]
 };
 function ikonKartu(t){
   /* kendaraan memakai gambar mobil, dikecilkan oleh aturan .tile .bubble .foto */
   if(t==="kendaraan") return FOTO_KENDARAAN["Mobil"]
     ? '<img class="foto" src="'+FOTO_KENDARAAN["Mobil"]+'" alt="">'
+    : KARTU[t][0];
+  if(t==="aktivitas") return FOTO_AKTIVITAS["Bangun Tidur"]
+    ? '<img class="foto" src="'+FOTO_AKTIVITAS["Bangun Tidur"]+'" alt="">'
     : KARTU[t][0];
   if(t==="shape") return svgShape("segitiga");
   if(t==="color") return '<span class="sw" style="width:28px;height:28px;background:'+colorHex("merah")+'"></span>';
@@ -811,7 +826,7 @@ function jumlahItem(t){
   if(t==="shape") return SHAPES.length;
   return 0;
 }
-var TINT={upper:"#5f94a3",lower:"#6a9c77",num:"#8d80b3",hijaiyah:"#5b9b8f",profesi:"#b07a52",buah:"#c06a5a",kendaraan:"#4a84a8",shape:"#c08a57",color:"#bd7d8e",pattern:"#5b8bb8"};
+var TINT={upper:"#5f94a3",lower:"#6a9c77",num:"#8d80b3",hijaiyah:"#5b9b8f",profesi:"#b07a52",buah:"#c06a5a",kendaraan:"#4a84a8",aktivitas:"#7b8f5e",shape:"#c08a57",color:"#bd7d8e",pattern:"#5b8bb8"};
 
 function viewHome(){
   var h='<div class="hero"><p>Belajar pelan-pelan, satu demi satu</p>'+
@@ -876,7 +891,7 @@ function viewLearn(){
     if(S.words) h+='<div class="word"><span class="emoji">'+WORD[up][1]+'</span>'+WORD[up][0]+'</div>';
   }
   else if(t==="hijaiyah") h+='<div class="word">'+esc(hij(cur).nama)+'</div>';
-  else if(t==="profesi"||t==="buah"||t==="kendaraan") h+='<div class="word">'+esc(cur)+'</div>';
+  else if(t==="profesi"||t==="buah"||t==="kendaraan"||t==="aktivitas") h+='<div class="word">'+esc(cur)+'</div>';
   else h+='<div class="word">'+esc(cur)+'</div>';
   h+='</div><div class="counter">'+(V.idx+1)+' dari '+list.length+'</div></div>'+
   '<div class="controls">'+
@@ -904,7 +919,7 @@ var STAGES=[
 ];
 function stagesFor(){
   var t=kind();
-  if(t==="profesi"||t==="buah"||t==="kendaraan") return [STAGES[0],STAGES[2]];
+  if(t==="profesi"||t==="buah"||t==="kendaraan"||t==="aktivitas") return [STAGES[0],STAGES[2]];
   return STAGES;
 }
 function stageAktif(){
@@ -1060,7 +1075,29 @@ function viewPatternQuiz(){
 /* ===================== MENULIS ===================== */
 
 var pad=null,pctx=null,strokes=[],drawing=false,curStroke=null,geom=null,padW=0,padH=0;
-var PEN=16, TOL=20, RING=24;
+var PEN=16, TOL=20, RING=24, MARGIN=9;
+/* Lapisan untuk mode stensil:
+   bgCv   = garis panduan, digambar sekali tiap item
+   inkCv  = coretan anak, sudah dipotong bentuk huruf
+   maskCv = bentuk huruf solid, dipakai memotong coretan
+   Coretan di luar huruf dibuang saat digambar, jadi tidak pernah membekas. */
+var bgCv=null,inkCv=null,maskCv=null,DPR=1;
+function stensilAktif(){ return S.stensil!=="bebas"; }
+function kanvasBaru(){
+  var cv=document.createElement("canvas");
+  cv.width=Math.round(padW*DPR); cv.height=Math.round(padH*DPR);
+  var c=cv.getContext("2d"); c.setTransform(DPR,0,0,DPR,0,0);
+  return {cv:cv,c:c};
+}
+/* salin satu bagian persegi dari kanvas lain, memakai piksel perangkat */
+function salin(tujuan,sumber,x,y,w,h){
+  tujuan.save(); tujuan.setTransform(1,0,0,1,0,0);
+  var X=Math.max(0,Math.floor(x*DPR)), Y=Math.max(0,Math.floor(y*DPR));
+  var W=Math.min(Math.ceil(w*DPR),Math.round(padW*DPR)-X);
+  var H=Math.min(Math.ceil(h*DPR),Math.round(padH*DPR)-Y);
+  if(W>0&&H>0) tujuan.drawImage(sumber,X,Y,W,H,X,Y,W,H);
+  tujuan.restore();
+}
 var LEVELS={longgar:{cov:.55,acc:.42},sedang:{cov:.70,acc:.58},teliti:{cov:.84,acc:.70}};
 function level(){ return LEVELS[S.writeLevel]||LEVELS.longgar; }
 
@@ -1116,25 +1153,57 @@ function mountCanvas(){
   var dpr=Math.min(window.devicePixelRatio||1,2);
   pad.width=Math.round(padW*dpr); pad.height=Math.round(padH*dpr);
   pctx=pad.getContext("2d");
+  DPR=dpr;
   pctx.setTransform(dpr,0,0,dpr,0,0);
   geom=buildGeom(pctx,padW,padH,String(items()[V.idx]));
+  siapkanLapisan();
   redraw();
 
   pad.onpointerdown=function(e){
     e.preventDefault(); drawing=true;
     try{pad.setPointerCapture(e.pointerId);}catch(_){}
     curStroke=[pos(e)]; strokes.push(curStroke);
-    penStyle(pctx,1,PEN); pctx.strokeStyle=cssVar("--accent","#4f7d8c");
     var p=curStroke[0];
-    pctx.beginPath(); pctx.moveTo(p.x,p.y); pctx.lineTo(p.x+.01,p.y); pctx.stroke();
+    goresKe(p,p);
   };
   pad.onpointermove=function(e){
     if(!drawing) return;
     var p=pos(e), q=curStroke[curStroke.length-1];
     curStroke.push(p);
-    pctx.beginPath(); pctx.moveTo(q.x,q.y); pctx.lineTo(p.x,p.y); pctx.stroke();
+    goresKe(q,p);
   };
   pad.onpointerup=pad.onpointercancel=function(){ if(!drawing) return; drawing=false; evaluate(); };
+}
+/* Menggambar satu ruas coretan. Dengan stensil, ruas digambar di lapisan
+   tinta lalu bagian yang keluar dari huruf langsung dihapus, dan hanya
+   kotak kecil di sekitar ruas itu yang digambar ulang ke layar. */
+function goresKe(a,b){
+  if(!stensilAktif()||!inkCv){
+    penStyle(pctx,1,PEN); pctx.strokeStyle=cssVar("--accent","#4f7d8c");
+    pctx.beginPath(); pctx.moveTo(a.x,a.y); pctx.lineTo(b.x+(a===b?.01:0),b.y); pctx.stroke();
+    return;
+  }
+  var ic=inkCv.c;
+  penStyle(ic,1,PEN); ic.strokeStyle=cssVar("--accent","#4f7d8c");
+  ic.globalCompositeOperation="source-over";
+  ic.beginPath(); ic.moveTo(a.x,a.y); ic.lineTo(b.x+(a===b?.01:0),b.y); ic.stroke();
+
+  var m=PEN/2+3;
+  var x=Math.min(a.x,b.x)-m, y=Math.min(a.y,b.y)-m;
+  var w=Math.abs(b.x-a.x)+m*2, h=Math.abs(b.y-a.y)+m*2;
+
+  /* buang bagian ruas ini yang berada di luar huruf */
+  ic.save();
+  ic.beginPath(); ic.rect(x,y,w,h); ic.clip();
+  ic.globalCompositeOperation="destination-in";
+  ic.setTransform(1,0,0,1,0,0);
+  ic.drawImage(maskCv.cv,0,0);
+  ic.restore();
+  ic.globalCompositeOperation="source-over";
+
+  pctx.clearRect(x,y,w,h);
+  salin(pctx,bgCv.cv,x,y,w,h);
+  salin(pctx,inkCv.cv,x,y,w,h);
 }
 function pos(e){var r=pad.getBoundingClientRect();return{x:e.clientX-r.left,y:e.clientY-r.top};}
 function cssVar(n,f){var v=getComputedStyle(document.documentElement).getPropertyValue(n).trim();return v||f;}
@@ -1163,19 +1232,32 @@ function corePaint(c,sc,mode){
   if(geom.kind==="text"){
     c.font=glyphFont(geom.size*sc);
     c.textAlign="center"; c.textBaseline="middle";
-    if(mode==="zone"){ c.lineWidth=TOL*2*sc; c.lineJoin="round"; c.strokeStyle="#000";
-                       c.strokeText(geom.text,geom.x*sc,geom.y*sc); }
+    if(mode==="zone"||mode==="stensil"){
+      c.lineWidth=(mode==="stensil"?MARGIN:TOL)*2*sc; c.lineJoin="round"; c.strokeStyle="#000";
+      c.strokeText(geom.text,geom.x*sc,geom.y*sc);
+    }
     c.fillStyle="#000"; c.fillText(geom.text,geom.x*sc,geom.y*sc);
     return;
   }
   var u=(geom.box/100)*sc;
   c.save(); c.translate(geom.dx*sc,geom.dy*sc); c.scale(u,u);
   c.lineJoin="round"; c.lineCap="round"; c.strokeStyle="#000";
-  c.lineWidth=((mode==="zone"?RING+TOL*2:RING)*100)/geom.box;
+  c.lineWidth=((mode==="zone"?RING+TOL*2:mode==="stensil"?RING+MARGIN*2:RING)*100)/geom.box;
   c.stroke(new Path2D(geom.d));
   c.restore();
 }
+function siapkanLapisan(){
+  bgCv=inkCv=maskCv=null;
+  if(!stensilAktif()) return;
+  bgCv=kanvasBaru(); inkCv=kanvasBaru(); maskCv=kanvasBaru();
+  corePaint(maskCv.c,1,"stensil");
+}
 function drawGhost(){
+  /* dengan stensil, panduan digambar ke lapisan sendiri supaya layar
+     bisa diperbaiki per bagian kecil tanpa menggambar ulang semuanya */
+  var target = (stensilAktif()&&bgCv) ? bgCv.c : pctx;
+  var simpan = pctx;
+  pctx = target;
   pctx.clearRect(0,0,padW,padH);
   var g=guideMode();
   var soft=cssVar("--accent-soft","#d8e5e9"), line=cssVar("--muted","#67787f");
@@ -1196,6 +1278,17 @@ function drawGhost(){
     pctx.setLineDash([9,9]); pctx.lineWidth=(2*100)/geom.box; pctx.strokeStyle=line; pctx.stroke(path);
   }
   pctx.restore();
+
+  /* Petunjuk diam bahwa hanya bagian dalam huruf yang bisa ditulisi:
+     bidang huruf diberi semburat tipis, seperti lubang pada stensil. */
+  if(stensilAktif()&&bgCv){
+    pctx.save(); pctx.globalAlpha=0.16; pctx.fillStyle=cssVar("--accent","#4f7d8c");
+    pctx.globalCompositeOperation="destination-over";
+    corePaint(pctx,1,"stensil");
+    pctx.restore();
+  }
+  pctx = simpan;
+  if(stensilAktif()&&bgCv){ pctx.clearRect(0,0,padW,padH); salin(pctx,bgCv.cv,0,0,padW,padH); }
 }
 function drawStrokes(c,sc,width){
   penStyle(c,sc,width); c.strokeStyle="#000";
@@ -1207,17 +1300,31 @@ function drawStrokes(c,sc,width){
     c.stroke();
   }
 }
+function garisStroke(c){
+  penStyle(c,1,PEN); c.strokeStyle=cssVar("--accent","#4f7d8c");
+  for(var i=0;i<strokes.length;i++){
+    var s=strokes[i]; if(!s.length) continue;
+    c.beginPath(); c.moveTo(s[0].x,s[0].y);
+    if(s.length===1) c.lineTo(s[0].x+.01,s[0].y);
+    else for(var j=1;j<s.length;j++) c.lineTo(s[j].x,s[j].y);
+    c.stroke();
+  }
+}
 function redraw(){
   if(!pctx||!geom) return;
   drawGhost();
-  penStyle(pctx,1,PEN); pctx.strokeStyle=cssVar("--accent","#4f7d8c");
-  for(var i=0;i<strokes.length;i++){
-    var s=strokes[i]; if(!s.length) continue;
-    pctx.beginPath(); pctx.moveTo(s[0].x,s[0].y);
-    if(s.length===1) pctx.lineTo(s[0].x+.01,s[0].y);
-    else for(var j=1;j<s.length;j++) pctx.lineTo(s[j].x,s[j].y);
-    pctx.stroke();
+  if(stensilAktif()&&inkCv){
+    var ic=inkCv.c;
+    ic.setTransform(DPR,0,0,DPR,0,0);
+    ic.clearRect(0,0,padW,padH);
+    garisStroke(ic);
+    ic.save(); ic.globalCompositeOperation="destination-in";
+    ic.setTransform(1,0,0,1,0,0); ic.drawImage(maskCv.cv,0,0); ic.restore();
+    ic.globalCompositeOperation="source-over";
+    salin(pctx,inkCv.cv,0,0,padW,padH);
+    return;
   }
+  garisStroke(pctx);
 }
 function alphaOf(w,h,paint){
   var cv=document.createElement("canvas"); cv.width=w; cv.height=h;
@@ -1228,10 +1335,31 @@ function evaluate(){
   if(!geom||!strokes.length) return;
   var sc=Math.min(1,240/Math.max(padW,padH));
   var AW=Math.max(40,Math.round(padW*sc)), AH=Math.max(40,Math.round(padH*sc));
+  /* Dengan stensil, yang benar-benar tergambar hanyalah bagian di dalam
+     huruf, jadi penilaian memakai tinta yang sudah dipotong juga. */
+  var pakaiStensil=stensilAktif();
+  /* Bentuk stensil disiapkan utuh di kanvas tersendiri lebih dulu.
+     Kalau digambar langsung dengan destination-in, garis tepi dan isian
+     huruf memotong dua kali berturut-turut dan yang tersisa cuma cincin
+     tepinya, sehingga penilaian jadi jauh terlalu ketat. */
+  var cvStensil=null;
+  if(pakaiStensil){
+    cvStensil=document.createElement("canvas");
+    cvStensil.width=AW; cvStensil.height=AH;
+    corePaint(cvStensil.getContext("2d"),sc,"stensil");
+  }
+  var potong=function(lebar){
+    return function(c){
+      drawStrokes(c,sc,lebar);
+      if(!pakaiStensil) return;
+      c.save(); c.globalCompositeOperation="destination-in";
+      c.drawImage(cvStensil,0,0); c.restore();
+    };
+  };
   var core=alphaOf(AW,AH,function(c){corePaint(c,sc,"fill");});
   var zone=alphaOf(AW,AH,function(c){corePaint(c,sc,"zone");});
-  var ink =alphaOf(AW,AH,function(c){drawStrokes(c,sc,PEN);});
-  var fat =alphaOf(AW,AH,function(c){drawStrokes(c,sc,PEN+20);});
+  var ink =alphaOf(AW,AH,potong(PEN));
+  var fat =alphaOf(AW,AH,potong(PEN+20));
 
   var coreN=0,coreHit=0,inkN=0,inkIn=0;
   for(var i=3;i<core.length;i+=4){
@@ -1240,14 +1368,17 @@ function evaluate(){
   }
   var cov=coreN?coreHit/coreN:0, acc=inkN?inkIn/inkN:0, L=level();
   var enough=inkN>(AW*AH*0.004);
-  var pass=enough&&cov>=L.cov&&acc>=L.acc;
+  /* Ketepatan tidak dinilai saat stensil aktif: coretan memang tidak
+     mungkin keluar, jadi yang tersisa untuk dinilai hanya kelengkapannya. */
+  var tepat=pakaiStensil||acc>=L.acc;
+  var pass=enough&&cov>=L.cov&&tepat;
 
   var bar=document.getElementById("w-bar");
   if(bar){bar.style.width=Math.min(100,Math.round(cov/L.cov*100))+"%"; bar.className=pass?"ok":"";}
 
   if(pass) finishItem();
   else if(!enough) setStatus("Mulai tebalkan garisnya",false);
-  else if(acc<L.acc) setStatus("Ikuti garisnya ya",false);
+  else if(!tepat) setStatus("Ikuti garisnya ya",false);
   else setStatus("Bagus, masih ada bagian yang kosong",false);
 }
 function setStatus(text,ok){
@@ -1265,7 +1396,9 @@ function finishItem(){
 }
 function clearPad(){
   if(!pctx) return;
-  strokes=[]; redraw();
+  strokes=[];
+  if(inkCv){ inkCv.c.setTransform(DPR,0,0,DPR,0,0); inkCv.c.clearRect(0,0,padW,padH); }
+  redraw();
   var bar=document.getElementById("w-bar");
   if(!isWritten()){
     if(bar){bar.style.width="0%";bar.className="";}
@@ -1353,8 +1486,9 @@ function viewSettings(){
   seg("Pilihan saat latihan","Mulai dari 2 pilihan","choices",[[2,"2"],[3,"3"],[4,"4"]])+
   seg("Batas angka","Berlaku di Belajar, Menulis, Papan, dan Latihan","range",[[10,"1-10"],[20,"1-20"],[50,"1-50"],[100,"1-100"]])+
   seg("Kunci saat menulis","Item berikutnya terbuka setelah yang ini selesai","writeLock",[[true,"Nyala"],[false,"Mati"]])+
-  seg("Ketelitian menulis","Longgar untuk yang baru belajar memegang pensil","writeLevel",[["longgar","Longgar"],["sedang","Sedang"],["teliti","Teliti"]])+
+  seg("Ketelitian menulis","Longgar: cukup digaris. Sedang: ditebalkan. Teliti: hampir diwarnai penuh","writeLevel",[["longgar","Longgar"],["sedang","Sedang"],["teliti","Teliti"]])+
   seg("Bantuan menulis","Otomatis: bantuan menyusut setelah 6 dan 14 item selesai","writeGuide",[["otomatis","Otomatis"],["penuh","Penuh"],["garis","Garis"],["samar","Samar"]])+
+  seg("Batas menulis","Seperti stensil: coretan di luar huruf tidak membekas","stensil",[["dalam","Dalam huruf"],["bebas","Bebas"]])+
   '<div class="setting"><div class="lbl">Materi yang ditampilkan</div>'+
   '<div class="hint">Sembunyikan yang belum dipakai supaya beranda tetap pendek</div>'+
   daftarMateri()+'</div>'+
