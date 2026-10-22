@@ -1,6 +1,7 @@
-UJUNG JARI versi 4.1
+UJUNG JARI versi 4.4
 Aplikasi belajar huruf, huruf hijaiyah, angka, bentuk, warna, pola,
-profesi, buah, kendaraan, dan kegiatan sehari-hari untuk anak.
+profesi, buah, kendaraan, kegiatan sehari-hari, dan benda di rumah
+untuk anak.
 
 ====================================================================
 1. ALAMAT EMAIL UNTUK SARAN
@@ -9,7 +10,7 @@ Buka index.html dengan editor teks apa pun. Di bagian atas ada blok:
 
   var APP={
     nama   : "Ujung Jari",
-    versi  : "4.1",
+    versi  : "4.4",
     email  : "support.ujungjari@gmail.com",
     subjek : "Saran untuk Ujung Jari"
   };
@@ -48,10 +49,14 @@ petunjuk manual lewat tombol Bagikan.
 ====================================================================
 index.html      kode aplikasi
 data/           gambar dan video, semuanya dimuat saat aplikasi dibuka
-                profesi.js, buah.js, kendaraan.js, aktivitas.js, kereta.js
+                profesi.js, buah.js, kendaraan.js, aktivitas.js,
+                benda.js, kereta.js
 manifest.json   nama, ikon, mode layar penuh, pintasan
 sw.js           service worker, membuat aplikasi jalan tanpa internet
 icons/          ikon 192 dan 512, versi biasa dan maskable
+
+Gambar disimpan sebagai JPEG mutu 72. Kalau nanti menambah gambar,
+pakai mutu yang sama supaya ukurannya konsisten.
 
 PENTING: folder data/ harus ikut diunggah. Semua berkas di dalamnya
 dimuat sekali saat aplikasi dibuka, lalu disimpan service worker,
@@ -62,7 +67,7 @@ jadi setelah pembukaan pertama semua gambar tersedia tanpa internet.
 ====================================================================
 Setiap kali index.html diubah, naikkan nomor versi cache di sw.js:
 
-  const VERSION = "ujung-jari-v31";   ->   "ujung-jari-v32"
+  const VERSION = "ujung-jari-v34";   ->   "ujung-jari-v35"
 
 Tanpa itu, perangkat yang sudah memasang akan terus memakai versi
 lama dari cache. Naikkan juga "versi" di blok APP pada index.html

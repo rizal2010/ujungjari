@@ -56,6 +56,34 @@ body{
 button{font:inherit;color:inherit;cursor:pointer;border:none;background:none}
 :focus-visible{outline:3px solid var(--accent);outline-offset:3px}
 
+#splash{position:fixed;inset:0;z-index:90;background:var(--bg);display:flex;
+  flex-direction:column;align-items:center;justify-content:center;gap:4px;
+  opacity:0;animation:spMuncul .3s ease .15s forwards}
+@keyframes spMuncul{to{opacity:1}}
+#splash.pergi{animation:none;opacity:0;transition:opacity .25s ease;pointer-events:none}
+.sp-judul{font-size:19px;font-weight:700;margin:18px 0 0;color:var(--ink)}
+.sp-kecil{font-size:14px;color:var(--muted);margin:2px 0 0}
+/* jejak titik yang menanjak, sama seperti ikon aplikasi */
+.sp-ikon{position:relative;width:132px;height:74px}
+.sp-ikon i,.sp-ikon b{position:absolute;border-radius:50%;background:var(--accent);display:block}
+.sp-ikon i{width:9px;height:9px;opacity:.3}
+.sp-ikon i:nth-child(1){left:2px;  top:58px}
+.sp-ikon i:nth-child(2){left:20px; top:47px}
+.sp-ikon i:nth-child(3){left:38px; top:37px}
+.sp-ikon i:nth-child(4){left:56px; top:28px}
+.sp-ikon i:nth-child(5){left:74px; top:20px}
+.sp-ikon i:nth-child(6){left:92px; top:13px}
+.sp-ikon b{width:26px;height:26px;left:104px;top:0}
+@media (prefers-reduced-motion:no-preference){
+  .sp-ikon i{animation:spTitik 1.6s ease-in-out infinite}
+  .sp-ikon i:nth-child(2){animation-delay:.12s}
+  .sp-ikon i:nth-child(3){animation-delay:.24s}
+  .sp-ikon i:nth-child(4){animation-delay:.36s}
+  .sp-ikon i:nth-child(5){animation-delay:.48s}
+  .sp-ikon i:nth-child(6){animation-delay:.60s}
+  @keyframes spTitik{0%,70%,100%{opacity:.3}35%{opacity:.85}}
+}
+
 header{display:flex;align-items:center;gap:10px;padding:10px 14px;min-height:60px;
   background:var(--surface);border-bottom:1px solid var(--line);flex:0 0 auto}
 header h1{font-size:19px;margin:0;font-weight:700;flex:1;text-align:center}
@@ -74,6 +102,7 @@ body[data-topic="profesi"]{--accent:#b07a52}
 body[data-topic="buah"]{--accent:#c06a5a}
 body[data-topic="kendaraan"]{--accent:#4a84a8}
 body[data-topic="aktivitas"]{--accent:#7b8f5e}
+body[data-topic="benda"]{--accent:#a8794a}
 body[data-topic="shape"]{--accent:#c08a57}
 body[data-topic="color"]{--accent:#bd7d8e}
 body[data-topic="pattern"]{--accent:#5b8bb8}
@@ -271,6 +300,19 @@ canvas{display:block;width:100%;height:100%;touch-action:none}
 </style>
 </head>
 <body>
+<!-- Gambar semua materi diambil sekali di pembukaan pertama. Selama itu
+     halaman akan diam, jadi layar ini mengisi jedanya. Muncul perlahan
+     setelah 150 ms: kalau aplikasi sudah tersimpan dan terbuka seketika,
+     layar ini tidak pernah sempat terlihat. -->
+<div id="splash">
+  <div class="sp-ikon" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><b></b></div>
+  <p class="sp-judul">Menyiapkan aplikasi</p>
+  <p class="sp-kecil">Hanya saat pertama kali dibuka</p>
+</div>
+<script>
+/* pengaman: apa pun yang terjadi, layar ini tidak boleh menyangkut */
+setTimeout(function(){ var e=document.getElementById("splash"); if(e) e.remove(); }, 20000);
+</script>
 <header>
   <button class="icon-btn" id="back" aria-label="Kembali ke beranda" hidden>&#8592;</button>
   <h1 id="title">Ujung Jari</h1>
@@ -282,6 +324,7 @@ canvas{display:block;width:100%;height:100%;touch-action:none}
 <script src="data/buah.js"></script>
 <script src="data/kendaraan.js"></script>
 <script src="data/aktivitas.js"></script>
+<script src="data/benda.js"></script>
 <script src="data/kereta.js"></script>
 <script>
 (function(){
@@ -294,7 +337,7 @@ canvas{display:block;width:100%;height:100%;touch-action:none}
    ======================================================================= */
 var APP={
   nama   : "Ujung Jari",
-  versi  : "4.1",
+  versi  : "4.4",
   email  : "support.ujungjari@gmail.com",
   subjek : "Saran untuk Ujung Jari"
 };
@@ -402,6 +445,8 @@ if(!window.FOTO) window.FOTO={};   /* cadangan bila data/profesi.js tak terbaca 
 if(!window.FOTO_BUAH) window.FOTO_BUAH={};
 if(!window.FOTO_KENDARAAN) window.FOTO_KENDARAAN={};
 if(!window.FOTO_AKTIVITAS) window.FOTO_AKTIVITAS={};
+if(!window.FOTO_BENDA) window.FOTO_BENDA={};
+var BENDA_RUMAH=["Sofa", "Kursi", "Meja", "Kasur", "Bantal", "Lemari", "Lampu", "Jam", "TV", "Kulkas", "Kompor", "Rice Cooker", "Mesin Cuci", "Kipas Angin", "Cermin", "Sikat Gigi", "Pasta Gigi", "Gelas", "Piring", "Sendok", "Garpu", "Sapu", "Tempat Sampah", "Buku", "Sepatu", "Sandal", "Handuk", "Sabun"];
 var AKTIVITAS=["Bangun Tidur", "Merapikan Kasur", "Sikat Gigi", "Cuci Tangan", "Mandi", "Sisir Rambut", "Pakai Baju", "Pakai Sepatu", "Makan", "Minum", "Baca Buku", "Menulis", "Menggambar", "Main Balok", "Main Bola", "Rapikan Mainan", "Menyapu", "Menyiram Tanaman", "Buang Sampah", "Berdoa", "Pergi Sekolah", "Pulang Sekolah", "Bermain Bersama", "Tidur"];
 var KENDARAAN=["Mobil", "Bus", "Pesawat", "Kereta Api", "Sepeda", "Motor", "Perahu Layar", "Kapal", "Helikopter", "Truk", "Ambulans", "Mobil Pemadam", "Mobil Polisi", "Taksi", "Balon Udara", "Kereta Metro", "Kereta Whoosh", "Skuter", "Traktor", "Ekskavator", "Roket"];
 var BUAH=["Apel", "Pisang", "Jeruk", "Anggur", "Semangka", "Stroberi", "Mangga", "Nanas", "Pepaya", "Ceri", "Durian", "Rambutan", "Buah Naga", "Alpukat", "Pir", "Kiwi", "Lemon", "Blueberry", "Kelapa", "Leci", "Jambu Biji", "Belimbing", "Kesemek", "Plum"];
@@ -523,6 +568,7 @@ var TOPICS={
  buah:{title:"Buah",kind:"buah",tabs:["belajar","latihan"]},
  kendaraan:{title:"Kendaraan",kind:"kendaraan",tabs:["belajar","latihan"]},
  aktivitas:{title:"Kegiatan",kind:"aktivitas",tabs:["belajar","latihan"]},
+ benda:{title:"Benda di Rumah",kind:"benda",tabs:["belajar","latihan"]},
  pattern:{title:"Pola",kind:"pattern",tabs:["latihan"]}
 };
 var TABNAME={belajar:"Belajar",tulis:"Menulis",latihan:"Latihan"};
@@ -628,7 +674,7 @@ function sayPair(x){
   if(t==="letter"){var u=String(x).toUpperCase();return [SAY[u],SAY_ALT[u]];}
   if(t==="hijaiyah"){var hh=hij(x);return [hh.say,hh.alt||hh.say,hh.ar];}
   if(t==="profesi"){var pp=prof(x);return [pp.say,pp.say];}
-  if(t==="buah"||t==="kendaraan"||t==="aktivitas"){var bb=String(x).toLowerCase();return [bb,bb];}
+  if(t==="buah"||t==="kendaraan"||t==="aktivitas"||t==="benda"){var bb=String(x).toLowerCase();return [bb,bb];}
   if(t==="num") return [terbilang(x),terbilang(x)];
   return [String(x),String(x)];
 }
@@ -691,6 +737,7 @@ function items(){
   if(t==="buah") return BUAH.slice();
   if(t==="kendaraan") return KENDARAAN.slice();
   if(t==="aktivitas") return AKTIVITAS.slice();
+  if(t==="benda") return BENDA_RUMAH.slice();
   return [];
 }
 function labelOf(x){
@@ -699,14 +746,14 @@ function labelOf(x){
   if(t==="num") return terbilang(x);
   if(t==="hijaiyah") return hij(x).say;
   if(t==="profesi") return prof(x).say;
-  if(t==="buah"||t==="kendaraan"||t==="aktivitas") return String(x).toLowerCase();
+  if(t==="buah"||t==="kendaraan"||t==="aktivitas"||t==="benda") return String(x).toLowerCase();
   return String(x);
 }
 /* yang ditulis di layar saat menyebut sebuah item */
 function namaOf(x){ return kind()==="hijaiyah" ? hij(x).nama : String(x); }
 function kindWord(){
   var t=kind();
-  return t==="num"?"angka":t==="shape"?"bentuk":t==="color"?"warna":t==="profesi"?"profesi":t==="buah"?"buah":t==="kendaraan"?"kendaraan":t==="aktivitas"?"kegiatan":"huruf";
+  return t==="num"?"angka":t==="shape"?"bentuk":t==="color"?"warna":t==="profesi"?"profesi":t==="buah"?"buah":t==="kendaraan"?"kendaraan":t==="aktivitas"?"kegiatan":t==="benda"?"benda":"huruf";
 }
 function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
 
@@ -739,6 +786,10 @@ function visual(id,alt){
   if(t==="aktivitas"){
     if(alt||!FOTO_AKTIVITAS[id]) return '<span class="word">'+esc(id)+'</span>';
     return '<img class="foto" src="'+FOTO_AKTIVITAS[id]+'" alt="">';
+  }
+  if(t==="benda"){
+    if(alt||!FOTO_BENDA[id]) return '<span class="word">'+esc(id)+'</span>';
+    return '<img class="foto" src="'+FOTO_BENDA[id]+'" alt="">';
   }
   if(t==="shape") return svgShape(id,alt?{outline:true}:{});
   if(t==="color") return '<span class="sw'+(alt?" round":"")+'" style="background:'+colorHex(id)+'"></span>';
@@ -786,7 +837,7 @@ function render(){
 var KELOMPOK=[
  {judul:"Huruf dan Angka", isi:["upper","lower","num","hijaiyah"]},
  {judul:"Bentuk dan Warna", isi:["shape","color","pattern"]},
- {judul:"Dunia Sekitar",    isi:["profesi","buah","kendaraan"]},
+ {judul:"Dunia Sekitar",    isi:["profesi","buah","kendaraan","benda"]},
  {judul:"Kegiatan",         isi:["aktivitas"]}
 ];
 var KARTU={
@@ -800,7 +851,8 @@ var KARTU={
  profesi:["","Profesi","Dokter, guru, masinis"],
  buah:["\uD83C\uDF4E","Buah","Apel, pisang, mangga"],
  kendaraan:["\uD83D\uDE97","Kendaraan","Mobil, kereta, pesawat"],
- aktivitas:["\uD83E\uDDF8","Kegiatan","Bangun tidur, mandi, makan"]
+ aktivitas:["\uD83E\uDDF8","Kegiatan","Bangun tidur, mandi, makan"],
+ benda:["\uD83E\uDE91","Benda di Rumah","Kursi, meja, lampu, jam"]
 };
 function ikonKartu(t){
   /* kendaraan memakai gambar mobil, dikecilkan oleh aturan .tile .bubble .foto */
@@ -809,6 +861,9 @@ function ikonKartu(t){
     : KARTU[t][0];
   if(t==="aktivitas") return FOTO_AKTIVITAS["Bangun Tidur"]
     ? '<img class="foto" src="'+FOTO_AKTIVITAS["Bangun Tidur"]+'" alt="">'
+    : KARTU[t][0];
+  if(t==="benda") return FOTO_BENDA["Kursi"]
+    ? '<img class="foto" src="'+FOTO_BENDA["Kursi"]+'" alt="">'
     : KARTU[t][0];
   if(t==="shape") return svgShape("segitiga");
   if(t==="color") return '<span class="sw" style="width:28px;height:28px;background:'+colorHex("merah")+'"></span>';
@@ -826,7 +881,7 @@ function jumlahItem(t){
   if(t==="shape") return SHAPES.length;
   return 0;
 }
-var TINT={upper:"#5f94a3",lower:"#6a9c77",num:"#8d80b3",hijaiyah:"#5b9b8f",profesi:"#b07a52",buah:"#c06a5a",kendaraan:"#4a84a8",aktivitas:"#7b8f5e",shape:"#c08a57",color:"#bd7d8e",pattern:"#5b8bb8"};
+var TINT={upper:"#5f94a3",lower:"#6a9c77",num:"#8d80b3",hijaiyah:"#5b9b8f",profesi:"#b07a52",buah:"#c06a5a",kendaraan:"#4a84a8",aktivitas:"#7b8f5e",benda:"#a8794a",shape:"#c08a57",color:"#bd7d8e",pattern:"#5b8bb8"};
 
 function viewHome(){
   var h='<div class="hero"><p>Belajar pelan-pelan, satu demi satu</p>'+
@@ -891,7 +946,7 @@ function viewLearn(){
     if(S.words) h+='<div class="word"><span class="emoji">'+WORD[up][1]+'</span>'+WORD[up][0]+'</div>';
   }
   else if(t==="hijaiyah") h+='<div class="word">'+esc(hij(cur).nama)+'</div>';
-  else if(t==="profesi"||t==="buah"||t==="kendaraan"||t==="aktivitas") h+='<div class="word">'+esc(cur)+'</div>';
+  else if(t==="profesi"||t==="buah"||t==="kendaraan"||t==="aktivitas"||t==="benda") h+='<div class="word">'+esc(cur)+'</div>';
   else h+='<div class="word">'+esc(cur)+'</div>';
   h+='</div><div class="counter">'+(V.idx+1)+' dari '+list.length+'</div></div>'+
   '<div class="controls">'+
@@ -919,7 +974,7 @@ var STAGES=[
 ];
 function stagesFor(){
   var t=kind();
-  if(t==="profesi"||t==="buah"||t==="kendaraan"||t==="aktivitas") return [STAGES[0],STAGES[2]];
+  if(t==="profesi"||t==="buah"||t==="kendaraan"||t==="aktivitas"||t==="benda") return [STAGES[0],STAGES[2]];
   return STAGES;
 }
 function stageAktif(){
@@ -1891,10 +1946,19 @@ function askQ(){
   speak(awal+kw+" "+pr[0], awal+kw+" "+pr[1]);
 }
 
+/* aplikasi siap: layar pembuka dilepas pelan supaya tidak terasa menyentak */
+function tutupSplash(){
+  var e=document.getElementById("splash");
+  if(!e) return;
+  e.className="pergi";
+  setTimeout(function(){ if(e.parentNode) e.parentNode.removeChild(e); },300);
+}
+
 var hash=(location.hash||"").replace("#","");
 if(TOPICS[hash]){ V.screen="topic"; V.topic=hash; V.tab=TOPICS[hash].tabs[0]; V.idx=0; }
 
 render();
+tutupSplash();
 setTimeout(function(){ showVoiceNotice(false); },900);
 
 if("serviceWorker" in navigator){
