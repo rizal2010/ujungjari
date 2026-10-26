@@ -1,7 +1,28 @@
-UJUNG JARI versi 4.4
+UJUNG JARI versi 4.8
 Aplikasi belajar huruf, huruf hijaiyah, angka, bentuk, warna, pola,
 profesi, buah, kendaraan, kegiatan sehari-hari, dan benda di rumah
 untuk anak.
+
+====================================================================
+0. PENTING: FOLDER icons/ BELUM ADA DI PAKET INI
+====================================================================
+Paket ini TIDAK berisi folder icons/, karena berkas PNG tidak bisa
+dititipkan lewat project (project hanya menyimpan teks).
+
+Sebelum di-deploy, salin folder icons/ dari paket 4.6 ke folder ini.
+Isinya lima berkas:
+
+  icons/icon-192.png
+  icons/icon-512.png
+  icons/icon-192-maskable.png
+  icons/icon-512-maskable.png
+  icons/apple-touch-icon.png
+
+Kalau folder itu tidak ada, aplikasi tetap bisa dibuka, TAPI:
+- tombol "Pasang di layar utama" tidak muncul di Chrome, karena
+  manifest menunjuk ikon yang tidak ada
+- sw.js memakai addAll yang gagal total bila satu berkas meleset,
+  jadi aplikasi tidak akan siap dipakai tanpa internet
 
 ====================================================================
 1. ALAMAT EMAIL UNTUK SARAN
@@ -10,7 +31,7 @@ Buka index.html dengan editor teks apa pun. Di bagian atas ada blok:
 
   var APP={
     nama   : "Ujung Jari",
-    versi  : "4.4",
+    versi  : "4.8",
     email  : "support.ujungjari@gmail.com",
     subjek : "Saran untuk Ujung Jari"
   };
@@ -54,6 +75,7 @@ data/           gambar dan video, semuanya dimuat saat aplikasi dibuka
 manifest.json   nama, ikon, mode layar penuh, pintasan
 sw.js           service worker, membuat aplikasi jalan tanpa internet
 icons/          ikon 192 dan 512, versi biasa dan maskable
+                (SALIN SENDIRI DARI PAKET 4.6, lihat bagian 0)
 
 Gambar disimpan sebagai JPEG mutu 72. Kalau nanti menambah gambar,
 pakai mutu yang sama supaya ukurannya konsisten.
@@ -67,14 +89,36 @@ jadi setelah pembukaan pertama semua gambar tersedia tanpa internet.
 ====================================================================
 Setiap kali index.html diubah, naikkan nomor versi cache di sw.js:
 
-  const VERSION = "ujung-jari-v34";   ->   "ujung-jari-v35"
+  const VERSION = "ujung-jari-v38";   ->   "ujung-jari-v39"
 
 Tanpa itu, perangkat yang sudah memasang akan terus memakai versi
 lama dari cache. Naikkan juga "versi" di blok APP pada index.html
 supaya nomor di halaman Tentang ikut berubah.
 
 ====================================================================
-5. CATATAN
+5. YANG BARU DI 4.7 DAN 4.8
+====================================================================
+- Tampilan beranda bisa dipilih (4.7). Pengaturan > Tampilan beranda:
+  Daftar (satu kartu per baris, bawaan) atau Petak (dua kolom).
+  Kelompok Lainnya di bawah tetap daftar di kedua mode.
+
+- Halaman Pencapaian (4.8). Ada di beranda, kelompok Lainnya, di atas
+  Tentang. Isinya untuk orang tua dan terapis: berapa item sudah
+  ditulis, berapa yang dikenali anak saat latihan, dan berapa yang
+  sampai tahap Tunjuk. Ada tombol Salin ringkasan untuk ditempel ke
+  pesan buat terapis.
+
+  Catatan latihan hanya dicatat kalau anak benar di percobaan
+  PERTAMA. Setelah dua kali meleset, pilihan yang salah dipudarkan
+  sampai tersisa yang benar, jadi jawaban benar sesudah itu bukan
+  tanda anak mengenali.
+
+  Catatan latihan mulai dihitung sejak 4.8, jadi di perangkat yang
+  sudah lama dipakai angkanya mulai dari nol. Progres Menulis tidak
+  terpengaruh, itu sudah tercatat sejak lama dan tetap utuh.
+
+====================================================================
+6. CATATAN
 ====================================================================
 - Font Andika (huruf latin) dan Noto Naskh Arabic (huruf hijaiyah)
   diambil dari Google Fonts. Pembukaan pertama perlu
@@ -110,6 +154,20 @@ supaya nomor di halaman Tentang ikut berubah.
   Kalau tidak mau memakai suara Arab, ubah Pengaturan >
   Suara hijaiyah jadi "Indonesia saja". Bunyinya akan didekat-dekatkan, tapi tidak
   seakurat suara Indonesia asli.
+
+- Saat Menulis, huruf dicontohkan lebih dulu: sebuah titik berjalan
+  menyusuri huruf, satu goresan demi satu goresan, berhenti sejenak di tiap
+  awal goresan supaya anak melihat mulainya dari mana dan ke arah mana.
+  Contoh itu diputar sendiri hanya saat huruf dibuka pertama kali dan belum
+  pernah diselesaikan, dan bisa diulang lewat tombol "Caranya" di pojok kiri
+  atas kanvas. Sentuhan anak langsung menghentikannya dan jadi goresan
+  pertama, jadi anak tidak pernah ditahan menonton. Kalau mau diubah:
+  Pengaturan > Contoh cara menulis (Otomatis, Tombol saja, Mati).
+
+  Contoh ini belum ada untuk huruf hijaiyah. Untuk huruf latin dan angka,
+  aplikasi memeriksa dulu apakah jalur contohnya cocok dengan huruf yang
+  benar-benar tampil di ponsel itu; kalau tidak cocok, tombol "Caranya"
+  sengaja tidak muncul daripada menunjukkan jalan yang keliru.
 
 - Saat Menulis, coretan hanya membekas di dalam huruf, seperti stensil.
   Bidang huruf diberi semburat tipis supaya anak melihat di mana ia

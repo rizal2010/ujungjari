@@ -134,6 +134,34 @@ body[data-topic="pattern"]{--accent:#5b8bb8}
 .tile.pasang{border-color:var(--accent);border-width:2px}
 button.mailbtn{border:none;cursor:pointer}
 
+/* Tampilan beranda bisa dipilih lewat Pengaturan. Daftar tetap bawaan:
+   satu kartu per baris paling mudah dipindai anak. Petak dua kolom membuat
+   12 materi muat tanpa gulir panjang, berguna untuk orang tua dan terapis.
+   Subjudul panjang diganti yang pendek supaya kartu tidak jadi tiga baris. */
+.tile .tx i.sub-pendek{display:none}
+.menu.petak{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.menu.petak .tile{flex-direction:column;align-items:center;text-align:center;
+  gap:8px;padding:14px 10px;height:100%}
+.menu.petak .tile .bubble{width:58px;height:58px}
+.menu.petak .tile .tx{flex:0 0 auto;width:100%}
+.menu.petak .tile .tx b{font-size:16px;line-height:1.25}
+.menu.petak .tile .tx i.sub-panjang{display:none}
+.menu.petak .tile .tx i.sub-pendek{display:block}
+
+/* Halaman Pencapaian. Dibaca orang tua dan terapis, bukan anak, jadi
+   tampilannya setenang halaman Pengaturan: tanpa warna juara, tanpa
+   angka raksasa, tanpa ucapan selamat. */
+.capai{background:var(--surface);border:1px solid var(--line);border-radius:18px;
+  padding:14px 16px;margin-bottom:10px}
+.capai h4{margin:0;font-size:17px}
+.capai .baris{display:flex;justify-content:space-between;align-items:baseline;
+  gap:12px;font-size:15px;color:var(--muted);margin-top:6px}
+.capai .baris b{color:var(--ink);white-space:nowrap}
+.capai .kosong{font-size:14px;color:var(--muted);margin-top:6px}
+.capai .bar{margin-top:8px}
+.ringkas{white-space:pre-wrap;font-size:14px;line-height:1.5;margin:0 0 12px;
+  font-family:inherit}
+
 .tabs{display:flex;gap:5px;background:var(--surface-2);padding:5px;border-radius:16px;
   margin-bottom:12px;flex:0 0 auto}
 .tab{flex:1;padding:11px 2px;border-radius:12px;text-align:center;font-size:14px;color:var(--muted)}
@@ -222,6 +250,10 @@ button.mailbtn{border:none;cursor:pointer}
   overflow:hidden;min-height:300px;position:relative;
   width:calc(100% + 20px);margin-left:-10px;margin-right:-10px}
 canvas{display:block;width:100%;height:100%;touch-action:none}
+.demo-btn{position:absolute;top:12px;left:14px;min-height:0;padding:8px 14px;border-radius:999px;
+  background:var(--accent-soft);color:var(--ink);font-size:14px;font-weight:700;
+  display:flex;align-items:center;gap:6px;border:1px solid transparent}
+.demo-btn.main{background:var(--accent);color:#fff}
 .stamp{position:absolute;top:12px;right:14px;width:46px;height:46px;border-radius:50%;
   background:var(--ok);color:#fff;display:grid;place-items:center;font-size:26px;opacity:0;pointer-events:none}
 .stamp.show{opacity:1}
@@ -337,7 +369,7 @@ setTimeout(function(){ var e=document.getElementById("splash"); if(e) e.remove()
    ======================================================================= */
 var APP={
   nama   : "Ujung Jari",
-  versi  : "4.4",
+  versi  : "4.8",
   email  : "support.ujungjari@gmail.com",
   subjek : "Saran untuk Ujung Jari"
 };
@@ -356,47 +388,47 @@ var SAY_ALT={A:"ah",B:"beh",C:"cheh",D:"deh",E:"eh",F:"eff",G:"gheh",H:"hah",I:"
 K:"kah",L:"ell",M:"em",N:"en",O:"oh",P:"peh",Q:"kee",R:"air",S:"ess",T:"teh",U:"oo",V:"feh",
 W:"weh",X:"eks",Y:"yeh",Z:"zet"};
 var WORD={
-A:["apel","\uD83C\uDF4E"],B:["bola","\u26BD"],C:["cicak","\uD83E\uDD8E"],D:["domba","\uD83D\uDC11"],
-E:["es krim","\uD83C\uDF66"],F:["foto","\uD83D\uDCF7"],G:["gajah","\uD83D\uDC18"],H:["hujan","\uD83C\uDF27\uFE0F"],
-I:["ikan","\uD83D\uDC1F"],J:["jam","\u23F0"],K:["kucing","\uD83D\uDC31"],L:["lampu","\uD83D\uDCA1"],
-M:["mobil","\uD83D\uDE97"],N:["nanas","\uD83C\uDF4D"],O:["obat","\uD83D\uDC8A"],P:["pisang","\uD83C\uDF4C"],
-Q:["qurma","\uD83C\uDF3F"],R:["rumah","\uD83C\uDFE0"],S:["sepatu","\uD83D\uDC5F"],T:["topi","\uD83D\uDC52"],
-U:["ular","\uD83D\uDC0D"],V:["vas bunga","\uD83C\uDF3C"],W:["wortel","\uD83E\uDD55"],X:["xilofon","\uD83C\uDFB9"],
-Y:["yoyo","\uD83E\uDE80"],Z:["zebra","\uD83E\uDD93"]};
+A:["apel","🍎"],B:["bola","⚽"],C:["cicak","🦎"],D:["domba","🐑"],
+E:["es krim","🍦"],F:["foto","📷"],G:["gajah","🐘"],H:["hujan","🌧️"],
+I:["ikan","🐟"],J:["jam","⏰"],K:["kucing","🐱"],L:["lampu","💡"],
+M:["mobil","🚗"],N:["nanas","🍍"],O:["obat","💊"],P:["pisang","🍌"],
+Q:["qurma","🌿"],R:["rumah","🏠"],S:["sepatu","👟"],T:["topi","👒"],
+U:["ular","🐍"],V:["vas bunga","🌼"],W:["wortel","🥕"],X:["xilofon","🎹"],
+Y:["yoyo","🪀"],Z:["zebra","🦓"]};
 
 /* 28 huruf hijaiyah, urutan baku, bentuk tunggal (bukan sambung).
    nama = yang ditampilkan, say = yang diucapkan mesin suara Indonesia. */
 var HIJAIYAH=[
- {c:"\u0627",nama:"Alif", say:"alif", alt:"ah-lif", ar:"\u0623\u0644\u0641"},
- {c:"\u0628",nama:"Ba",   say:"ba",   alt:"bah",    ar:"\u0628\u0627\u0621"},
- {c:"\u062A",nama:"Ta",   say:"ta",   alt:"tah",    ar:"\u062A\u0627\u0621"},
- {c:"\u062B",nama:"Tsa",  say:"tsa",  alt:"tsah",   ar:"\u062B\u0627\u0621"},
- {c:"\u062C",nama:"Jim",  say:"jim",  alt:"jeem",   ar:"\u062C\u064A\u0645"},
- {c:"\u062D",nama:"Ha",   say:"ha",   alt:"hah",    ar:"\u062D\u0627\u0621"},
- {c:"\u062E",nama:"Kha",  say:"kho",  alt:"khoh",   ar:"\u062E\u0627\u0621"},
- {c:"\u062F",nama:"Dal",  say:"dal",  alt:"dahl",   ar:"\u062F\u0627\u0644"},
- {c:"\u0630",nama:"Dzal", say:"dzal", alt:"dzahl",  ar:"\u0630\u0627\u0644"},
- {c:"\u0631",nama:"Ra",   say:"ro",   alt:"roh",    ar:"\u0631\u0627\u0621"},
- {c:"\u0632",nama:"Zai",  say:"zai",  alt:"zay",    ar:"\u0632\u0627\u064A"},
- {c:"\u0633",nama:"Sin",  say:"sin",  alt:"seen",   ar:"\u0633\u064A\u0646"},
- {c:"\u0634",nama:"Syin", say:"syin", alt:"sheen",  ar:"\u0634\u064A\u0646"},
- {c:"\u0635",nama:"Shad", say:"shod", alt:"shod",   ar:"\u0635\u0627\u062F"},
- {c:"\u0636",nama:"Dhad", say:"dhod", alt:"dhod",   ar:"\u0636\u0627\u062F"},
- {c:"\u0637",nama:"Tha",  say:"tho",  alt:"toh",    ar:"\u0637\u0627\u0621"},
- {c:"\u0638",nama:"Zha",  say:"zho",  alt:"zoh",    ar:"\u0638\u0627\u0621"},
- {c:"\u0639",nama:"Ain",  say:"ain",  alt:"ayn",    ar:"\u0639\u064A\u0646"},
- {c:"\u063A",nama:"Ghain",say:"goin", alt:"ghoyn",  ar:"\u063A\u064A\u0646"},
- {c:"\u0641",nama:"Fa",   say:"fa",   alt:"fah",    ar:"\u0641\u0627\u0621"},
- {c:"\u0642",nama:"Qaf",  say:"qof",  alt:"kof",    ar:"\u0642\u0627\u0641"},
- {c:"\u0643",nama:"Kaf",  say:"kaf",  alt:"kahf",   ar:"\u0643\u0627\u0641"},
- {c:"\u0644",nama:"Lam",  say:"lam",  alt:"lahm",   ar:"\u0644\u0627\u0645"},
- {c:"\u0645",nama:"Mim",  say:"mim",  alt:"meem",   ar:"\u0645\u064A\u0645"},
- {c:"\u0646",nama:"Nun",  say:"nun",  alt:"noon",   ar:"\u0646\u0648\u0646"},
- {c:"\u0648",nama:"Wau",  say:"wau",  alt:"wow",    ar:"\u0648\u0627\u0648"},
- {c:"\u0647",nama:"Ha",   say:"ha",   alt:"hah",    ar:"\u0647\u0627\u0621"},
- {c:"\u0644\u0627",nama:"Lam Alif", say:"lam alif", alt:"lahm ah-lif", ar:"\u0644\u0627\u0645 \u0623\u0644\u0641"},
- {c:"\u0621",nama:"Hamzah", say:"hamzah", alt:"hahm-zah", ar:"\u0647\u0645\u0632\u0629"},
- {c:"\u064A",nama:"Ya",   say:"ya",   alt:"yah",    ar:"\u064A\u0627\u0621"}
+ {c:"ا",nama:"Alif", say:"alif", alt:"ah-lif", ar:"ألف"},
+ {c:"ب",nama:"Ba",   say:"ba",   alt:"bah",    ar:"باء"},
+ {c:"ت",nama:"Ta",   say:"ta",   alt:"tah",    ar:"تاء"},
+ {c:"ث",nama:"Tsa",  say:"tsa",  alt:"tsah",   ar:"ثاء"},
+ {c:"ج",nama:"Jim",  say:"jim",  alt:"jeem",   ar:"جيم"},
+ {c:"ح",nama:"Ha",   say:"ha",   alt:"hah",    ar:"حاء"},
+ {c:"خ",nama:"Kha",  say:"kho",  alt:"khoh",   ar:"خاء"},
+ {c:"د",nama:"Dal",  say:"dal",  alt:"dahl",   ar:"دال"},
+ {c:"ذ",nama:"Dzal", say:"dzal", alt:"dzahl",  ar:"ذال"},
+ {c:"ر",nama:"Ra",   say:"ro",   alt:"roh",    ar:"راء"},
+ {c:"ز",nama:"Zai",  say:"zai",  alt:"zay",    ar:"زاي"},
+ {c:"س",nama:"Sin",  say:"sin",  alt:"seen",   ar:"سين"},
+ {c:"ش",nama:"Syin", say:"syin", alt:"sheen",  ar:"شين"},
+ {c:"ص",nama:"Shad", say:"shod", alt:"shod",   ar:"صاد"},
+ {c:"ض",nama:"Dhad", say:"dhod", alt:"dhod",   ar:"ضاد"},
+ {c:"ط",nama:"Tha",  say:"tho",  alt:"toh",    ar:"طاء"},
+ {c:"ظ",nama:"Zha",  say:"zho",  alt:"zoh",    ar:"ظاء"},
+ {c:"ع",nama:"Ain",  say:"ain",  alt:"ayn",    ar:"عين"},
+ {c:"غ",nama:"Ghain",say:"goin", alt:"ghoyn",  ar:"غين"},
+ {c:"ف",nama:"Fa",   say:"fa",   alt:"fah",    ar:"فاء"},
+ {c:"ق",nama:"Qaf",  say:"qof",  alt:"kof",    ar:"قاف"},
+ {c:"ك",nama:"Kaf",  say:"kaf",  alt:"kahf",   ar:"كاف"},
+ {c:"ل",nama:"Lam",  say:"lam",  alt:"lahm",   ar:"لام"},
+ {c:"م",nama:"Mim",  say:"mim",  alt:"meem",   ar:"ميم"},
+ {c:"ن",nama:"Nun",  say:"nun",  alt:"noon",   ar:"نون"},
+ {c:"و",nama:"Wau",  say:"wau",  alt:"wow",    ar:"واو"},
+ {c:"ه",nama:"Ha",   say:"ha",   alt:"hah",    ar:"هاء"},
+ {c:"لا",nama:"Lam Alif", say:"lam alif", alt:"lahm ah-lif", ar:"لام ألف"},
+ {c:"ء",nama:"Hamzah", say:"hamzah", alt:"hahm-zah", ar:"همزة"},
+ {c:"ي",nama:"Ya",   say:"ya",   alt:"yah",    ar:"ياء"}
 ];
 function hij(ch){for(var i=0;i<HIJAIYAH.length;i++) if(HIJAIYAH[i].c===ch) return HIJAIYAH[i]; return HIJAIYAH[0];}
 
@@ -576,12 +608,14 @@ var TABNAME={belajar:"Belajar",tulis:"Menulis",latihan:"Latihan"};
 /* ===================== STATE ===================== */
 
 var KEY="belajar-huruf-angka:v1";
-var S={sound:true,motion:true,words:true,choices:2,range:10,theme:"auto",stars:0,
-       writeLock:true,writeLevel:"longgar",writeGuide:"otomatis",stensil:"dalam",
+var S={sound:true,motion:true,words:true,choices:2,range:10,theme:"auto",stars:0,beranda:"daftar",kenal:{},
+       writeLock:true,writeLevel:"longgar",writeGuide:"otomatis",stensil:"dalam",antiSapu:true,contoh:"otomatis",
        stage:"samakan",helpQuiz:true,voiceMode:"id",hijVoice:"auto",sembunyi:{},askName:"sebut",reward:"kereta",gambar:"foto",rewardSound:true,ttsHideNotice:false,done:{}};
 try{var raw=localStorage.getItem(KEY); if(raw){var p=JSON.parse(raw); for(var k in S){if(p&&p[k]!==undefined)S[k]=p[k];}}}catch(e){}
 if(!S.done||typeof S.done!=="object") S.done={};
+if(!S.kenal||typeof S.kenal!=="object") S.kenal={};
 function doneMap(t){ if(!S.done[t]) S.done[t]={}; return S.done[t]; }
+function kenalMap(t){ if(!S.kenal[t]) S.kenal[t]={}; return S.kenal[t]; }
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
 
 function applyTheme(){
@@ -804,7 +838,7 @@ function svgShape(id,o){
 }
 /* Benda yang bisa dihitung, bukan kotak warna. Satu jenis benda saja
    dan selalu sama, supaya anak tidak terpecah perhatiannya. */
-var BENDA="\uD83C\uDF4E";
+var BENDA="🍎";
 function miniObjects(n){
   var kol=Math.min(5,n);
   var h='<span class="objs" style="grid-template-columns:repeat('+kol+',auto)" aria-hidden="true">';
@@ -826,6 +860,7 @@ function render(){
   if(V.screen==="home"){titleEl.textContent="Ujung Jari";main.innerHTML=viewHome();}
   else if(V.screen==="set"){titleEl.textContent="Pengaturan";main.innerHTML=viewSettings();}
   else if(V.screen==="about"){titleEl.textContent="Tentang";main.innerHTML=viewAbout();}
+  else if(V.screen==="capai"){titleEl.textContent="Pencapaian";main.innerHTML=viewPencapaian();}
   else{
     titleEl.textContent = V.topic==="num" ? "Angka 1 sampai "+(S.range||100) : TOPICS[V.topic].title;
     main.innerHTML=viewTopic();
@@ -844,15 +879,15 @@ var KARTU={
  upper:["Aa","Huruf Besar","A sampai Z"],
  lower:["aa","Huruf Kecil","a sampai z"],
  num:["12","Angka",""],
- hijaiyah:["\u0628","Huruf Hijaiyah","Alif sampai Ya"],
+ hijaiyah:["ب","Huruf Hijaiyah","Alif sampai Ya"],
  shape:["","Bentuk","Lingkaran, segitiga, bintang"],
  color:["","Warna","Cocokkan lalu kenali"],
  pattern:["","Pola","Tebak yang berikutnya"],
  profesi:["","Profesi","Dokter, guru, masinis"],
- buah:["\uD83C\uDF4E","Buah","Apel, pisang, mangga"],
- kendaraan:["\uD83D\uDE97","Kendaraan","Mobil, kereta, pesawat"],
- aktivitas:["\uD83E\uDDF8","Kegiatan","Bangun tidur, mandi, makan"],
- benda:["\uD83E\uDE91","Benda di Rumah","Kursi, meja, lampu, jam"]
+ buah:["🍎","Buah","Apel, pisang, mangga"],
+ kendaraan:["🚗","Kendaraan","Mobil, kereta, pesawat"],
+ aktivitas:["🧸","Kegiatan","Bangun tidur, mandi, makan"],
+ benda:["🪑","Benda di Rumah","Kursi, meja, lampu, jam"]
 };
 function ikonKartu(t){
   /* kendaraan memakai gambar mobil, dikecilkan oleh aturan .tile .bubble .foto */
@@ -884,12 +919,16 @@ function jumlahItem(t){
 var TINT={upper:"#5f94a3",lower:"#6a9c77",num:"#8d80b3",hijaiyah:"#5b9b8f",profesi:"#b07a52",buah:"#c06a5a",kendaraan:"#4a84a8",aktivitas:"#7b8f5e",benda:"#a8794a",shape:"#c08a57",color:"#bd7d8e",pattern:"#5b8bb8"};
 
 function viewHome(){
+  /* Kelas "petak" hanya dipasang pada kelompok materi. Kelompok Lainnya di
+     bawah sengaja tetap daftar: itu menu orang tua, labelnya panjang, dan
+     bukan sasaran jari anak. */
+  var kelas = S.beranda==="petak" ? " petak" : "";
   var h='<div class="hero"><p>Belajar pelan-pelan, satu demi satu</p>'+
         '<span class="chip">&#11088; <b>'+S.stars+'</b></span></div>';
   for(var g=0;g<KELOMPOK.length;g++){
     var isi=KELOMPOK[g].isi.filter(function(t){ return !(S.sembunyi&&S.sembunyi[t]); });
     if(!isi.length) continue;
-    h+='<h3 class="grup">'+KELOMPOK[g].judul+'</h3><div class="menu">';
+    h+='<h3 class="grup">'+KELOMPOK[g].judul+'</h3><div class="menu'+kelas+'">';
     for(var i=0;i<isi.length;i++){
       var t=isi[i], k=KARTU[t];
       var sub = t==="num" ? "1 sampai "+(S.range||100) : k[2];
@@ -903,7 +942,10 @@ function viewHome(){
        '<span class="bubble">&#11015;</span><span class="tx"><b>Pasang di layar utama</b>'+
        '<i>Punya ikon sendiri, bisa dibuka tanpa internet</i></span></button>';
   }
-  h+='<button class="tile" data-act="go-about" style="--tint:var(--muted);--tint-soft:var(--surface-2)">'+
+  h+='<button class="tile" data-act="go-capai" style="--tint:var(--star);--tint-soft:var(--surface-2)">'+
+     '<span class="bubble">&#9733;</span><span class="tx"><b>Pencapaian</b>'+
+     '<i>Ringkasan untuk orang tua dan terapis</i></span></button>'+
+     '<button class="tile" data-act="go-about" style="--tint:var(--muted);--tint-soft:var(--surface-2)">'+
      '<span class="bubble">&#8505;</span><span class="tx"><b>Tentang</b><i>Sekilas aplikasi ini</i></span></button>'+
      '<button class="tile" data-act="go-set" style="--tint:var(--muted);--tint-soft:var(--surface-2)">'+
      '<span class="bubble">&#9881;</span><span class="tx"><b>Pengaturan</b><i>Suara, bantuan, materi yang tampil</i></span></button>'+
@@ -915,9 +957,16 @@ function tile(topic,icon,t,sub,done,total){
   var style='--tint:'+tint+';--tint-soft:'+tint+'22';
   var bar = total ? '<span class="bar"><u style="width:'+Math.round(Math.min(1,done/total)*100)+'%"></u></span>' : '';
   var note = total ? sub+', selesai '+done+' dari '+total : sub;
+  /* Dua subjudul: yang panjang untuk tampilan daftar, yang pendek untuk
+     petak. CSS yang memilih mana yang tampil, jadi isinya tidak perlu
+     dihitung ulang saat tampilan beranda diganti. */
+  var pendek = total ? done+' dari '+total : '';
   return '<button class="tile" data-act="go" data-topic="'+topic+'" style="'+style+'">'+
          '<span class="bubble">'+icon+'</span>'+
-         '<span class="tx"><b>'+t+'</b><i>'+note+'</i>'+bar+'</span></button>';
+         '<span class="tx"><b>'+t+'</b>'+
+         '<i class="sub-panjang">'+note+'</i>'+
+         (pendek?'<i class="sub-pendek">'+pendek+'</i>':'')+
+         bar+'</span></button>';
 }
 
 function viewTopic(){
@@ -1062,7 +1111,17 @@ function answer(btn){
   if(picked===String(q.target)){
     q.solved=true;
     btn.className="choice right";
-    V.streak++; S.stars++; save();
+    V.streak++; S.stars++;
+    /* Dicatat hanya kalau benar di percobaan pertama. Setelah dua kali
+       meleset pilihan yang salah dipudarkan, jadi jawaban benar sesudah itu
+       belum tentu berarti anak mengenali. Yang disimpan tahap tertingginya:
+       Sama 1, Pasang 2, Tunjuk 3. */
+    if(q.wrongs===0&&kind()!=="pattern"){
+      var st0=stageAktif(), nilai=st0==="tunjuk"?3:st0==="pasangkan"?2:1;
+      var km=kenalMap(V.topic), kk=String(q.target);
+      if(!km[kk]||km[kk]<nilai) km[kk]=nilai;
+    }
+    save();
     if(note){note.textContent="Benar";note.className="done-note ok";}
     speak("benar","buh-nar");
     var lanjut=function(){ newQuestion(); render(); askQ(); };
@@ -1130,7 +1189,13 @@ function viewPatternQuiz(){
 /* ===================== MENULIS ===================== */
 
 var pad=null,pctx=null,strokes=[],drawing=false,curStroke=null,geom=null,padW=0,padH=0;
+var jariAktif=null;
 var PEN=16, TOL=20, RING=24, MARGIN=9;
+/* Batas "boros gerakan". Menulis dan menebalkan huruf dengan benar terukur
+   pada 1,0 sampai 6,3 kali jarak terpendek yang masuk akal; mengisi huruf
+   dengan sapuan bolak-balik terukur 14,7 ke atas. Angka 8 duduk di antara
+   keduanya dengan jarak lega ke dua sisi. */
+var BATAS_SAPU=8;
 /* Lapisan untuk mode stensil:
    bgCv   = garis panduan, digambar sekali tiap item
    inkCv  = coretan anak, sudah dipotong bentuk huruf
@@ -1186,6 +1251,7 @@ function viewWrite(){
   var g=guideMode();
   var gLabel=g==="penuh"?"bantuan penuh":g==="garis"?"garis tepi":"garis samar";
   return '<div class="canvas-wrap"><canvas id="pad"></canvas>'+
+  '<button class="demo-btn" id="w-demo" data-act="contoh" hidden>&#9655; Caranya</button>'+
   '<div class="stamp'+(done?" show":"")+'" id="w-stamp" aria-hidden="true">&#10003;</div></div>'+
   '<div class="gauge" aria-hidden="true"><i id="w-bar" class="'+(done?"ok":"")+'" style="width:'+(done?100:0)+'%"></i></div>'+
   '<p class="status'+(done?" ok":"")+'" id="w-status" role="status">'+
@@ -1202,7 +1268,7 @@ function viewWrite(){
 
 function mountCanvas(){
   pad=document.getElementById("pad"); if(!pad) return;
-  strokes=[]; drawing=false;
+  strokes=[]; drawing=false; jariAktif=null;
   var r=pad.parentNode.getBoundingClientRect();
   padW=Math.max(80,r.width); padH=Math.max(80,r.height);
   var dpr=Math.min(window.devicePixelRatio||1,2);
@@ -1214,20 +1280,46 @@ function mountCanvas(){
   siapkanLapisan();
   redraw();
 
+  /* Jalur contoh disiapkan sekali tiap huruf, lalu diperiksa ke bentuk huruf
+     yang benar-benar tampil di perangkat ini. */
+  anim=null; animStrokes=null;
+  var jl=(S.contoh==="mati")?null:jalurItem();
+  animStrokes=(jl&&jalurPas(jl))?jl:false;
+  var tb=document.getElementById("w-demo");
+  if(tb) tb.hidden=!animStrokes;
+  /* Diputar sendiri hanya saat huruf ini belum pernah selesai, jadi anak yang
+     sudah hafal tidak ditahan menonton ulang tiap kali membuka. */
+  if(animStrokes&&S.contoh==="otomatis"&&!isWritten()) setTimeout(mainkanContoh,260);
+
+  /* Menulis itu dengan satu jari. Jari kedua diabaikan, bukan dilarang
+     dengan nada menyalahkan: anak cuma diberi tahu sekali, lembut. */
   pad.onpointerdown=function(e){
-    e.preventDefault(); drawing=true;
+    e.preventDefault();
+    /* Anak yang sudah mau menulis tidak ditahan: sentuhan menghentikan contoh
+       dan langsung jadi goresan pertama. */
+    if(anim) hentikanContoh();
+    if(jariAktif!==null){
+      if(!isWritten()) setStatus("Pakai satu jari ya",false);
+      return;
+    }
+    jariAktif=e.pointerId; drawing=true;
     try{pad.setPointerCapture(e.pointerId);}catch(_){}
     curStroke=[pos(e)]; strokes.push(curStroke);
     var p=curStroke[0];
     goresKe(p,p);
   };
   pad.onpointermove=function(e){
-    if(!drawing) return;
+    if(!drawing||e.pointerId!==jariAktif) return;
     var p=pos(e), q=curStroke[curStroke.length-1];
     curStroke.push(p);
     goresKe(q,p);
   };
-  pad.onpointerup=pad.onpointercancel=function(){ if(!drawing) return; drawing=false; evaluate(); };
+  pad.onpointerup=pad.onpointercancel=function(e){
+    if(e&&e.pointerId!==jariAktif) return;
+    jariAktif=null;
+    if(!drawing) return;
+    drawing=false; evaluate();
+  };
 }
 /* Menggambar satu ruas coretan. Dengan stensil, ruas digambar di lapisan
    tinta lalu bagian yang keluar dari huruf langsung dihapus, dan hanya
@@ -1381,6 +1473,252 @@ function redraw(){
   }
   garisStroke(pctx);
 }
+/* ===================== CONTOH CARA MENULIS =====================
+   Font hanya menyimpan bentuk luar huruf, bukan garis tengahnya dan bukan
+   urutan goresannya. Jadi jalur di bawah ini ditulis tangan: tiap huruf
+   berisi daftar goresan, urutan larik adalah urutan menulis, dan arah path
+   adalah arah tangan bergerak. Koordinat 0..100 nanti dipetakan ke kotak
+   tinta huruf yang sebenarnya, jadi jalurnya ikut berapa pun ukuran huruf.
+
+   Jalur ini sudah diuji: kalau ditelusuri persis, hasilnya lolos penilaian
+   menulis di ketiga tingkat ketelitian, dengan rasio gerakan 1,5 - 3,0 kali
+   (batas menyapu 8). Artinya contoh yang ditunjukkan memang jawaban benar,
+   bukan gerakan yang nanti ditolak aplikasinya sendiri. */
+var GORESAN = {
+ "A":["M2 100 L50 0","M50 0 L98 100","M18 66 L82 66"],
+ "B":["M8 0 L8 100","M8 0 L56 0 C90 0 90 48 56 48 L8 48","M8 48 L58 48 C92 48 92 100 58 100 L8 100"],
+ "C":["M95 22 C88 -2 5 -8 5 50 C5 108 88 102 95 78"],
+ "D":["M8 0 L8 100","M8 0 L46 0 C92 0 92 100 46 100 L8 100"],
+ "E":["M8 0 L8 100","M8 0 L92 0","M8 50 L78 50","M8 100 L92 100"],
+ "F":["M8 0 L8 100","M8 0 L92 0","M8 50 L78 50"],
+ "G":["M95 22 C88 -2 5 -8 5 50 C5 108 95 104 95 70 L95 56 L58 56"],
+ "H":["M8 0 L8 100","M92 0 L92 100","M8 52 L92 52"],
+ "I":["M50 0 L50 100"],
+ "J":["M76 0 L76 70 C76 100 22 104 12 78"],
+ "K":["M8 0 L8 100","M92 0 L20 54","M38 40 L95 100"],
+ "L":["M8 0 L8 100 L92 100"],
+ "M":["M4 100 L4 0 L50 62 L96 0 L96 100"],
+ "N":["M6 100 L6 0 L94 100 L94 0"],
+ "O":["M50 0 C-8 0 -8 100 50 100 C108 100 108 0 50 0"],
+ "P":["M8 0 L8 100","M8 0 L54 0 C88 0 88 54 54 54 L8 54"],
+ "Q":["M50 0 C-6 0 -6 76 50 76 C106 76 106 0 50 0","M62 68 L84 95"],
+ "R":["M8 0 L8 100","M8 0 L54 0 C88 0 88 52 54 52 L8 52","M46 52 L92 100"],
+ "S":["M92 20 C86 -4 10 -6 10 26 C10 50 90 48 90 74 C90 106 12 102 6 78"],
+ "T":["M4 0 L96 0","M50 0 L50 100"],
+ "U":["M6 0 L6 66 C6 106 94 106 94 66 L94 0"],
+ "V":["M4 0 L50 100 L96 0"],
+ "W":["M2 0 L24 100 L50 28 L76 100 L98 0"],
+ "X":["M6 0 L94 100","M94 0 L6 100"],
+ "Y":["M6 0 L50 50 L94 0","M50 50 L50 100"],
+ "Z":["M6 0 L94 0 L6 100 L94 100"],
+
+ "0":["M50 0 C-2 0 -2 100 50 100 C102 100 102 0 50 0"],
+ "1":["M14 22 L52 0 L52 100"],
+ "2":["M8 26 C14 -2 92 -2 92 28 C92 54 26 68 6 100 L94 100"],
+ "3":["M10 22 C18 -2 88 0 84 26 C81 46 54 50 44 50 C58 50 92 52 90 76 C88 102 16 102 8 78"],
+ "4":["M72 0 L4 70 L96 70","M72 0 L72 100"],
+ "5":["M88 0 L24 0 L16 44 C40 32 94 38 92 70 C90 104 18 106 8 84"],
+ "6":["M82 10 C64 -4 16 8 14 56 C12 96 86 104 86 72 C86 46 26 40 16 60"],
+ "7":["M4 0 L96 0 L34 100"],
+ "8":["M50 48 C14 48 10 0 50 0 C90 0 86 48 50 48 C8 48 6 100 50 100 C94 100 92 48 50 48"],
+ "9":["M20 94 C40 104 86 92 86 44 C88 4 14 -2 14 28 C14 54 78 60 86 36"],
+ "a":["M88 20 C72 -8 8 -2 8 50 C8 102 74 106 88 78","M88 4 L88 100"],
+ "b":["M8 0 L8 100","M10 68 C10 25 94 25 94 68 C94 111 10 111 10 68"],
+ "c":["M92 30 C84 6 8 2 8 50 C8 98 84 94 92 70"],
+ "d":["M90 68 C90 25 8 25 8 68 C8 111 90 111 90 68","M92 0 L92 100"],
+ "e":["M8 56 L94 56 C96 22 12 12 8 50 C4 92 58 108 90 80"],
+ "f":["M84 16 C74 -8 42 -6 42 28 L42 100","M6 36 L82 36"],
+ "g":["M86 16 C70 -6 12 -2 12 36 C12 72 70 76 86 52","M86 2 L86 70 C86 94 38 102 22 86"],
+ "h":["M8 0 L8 100","M8 52 C22 33 92 30 92 60 L92 100"],
+ "i":["M50 30 L50 100","M50 4 L50 6"],
+ "j":["M66 22 L66 80 C66 98 26 102 16 88","M66 3 L66 5"],
+ "k":["M8 0 L8 100","M90 34 L16 76","M38 64 L92 100"],
+ "l":["M50 0 L50 100"],
+ "m":["M8 8 L8 100","M8 26 C14 2 48 0 50 26 L50 100","M50 26 C56 2 92 0 92 26 L92 100"],
+ "n":["M8 8 L8 100","M8 28 C16 2 92 0 92 30 L92 100"],
+ "o":["M50 0 C-6 0 -6 100 50 100 C106 100 106 0 50 0"],
+ "p":["M8 0 L8 100","M10 36 C10 -12 92 -12 92 36 C92 84 10 84 10 36"],
+ "q":["M90 36 C90 -12 8 -12 8 36 C8 84 90 84 90 36","M92 0 L92 100"],
+ "r":["M8 0 L8 100","M8 30 C20 4 60 0 86 8"],
+ "s":["M88 20 C82 -4 14 -6 14 26 C14 48 86 48 86 72 C86 104 18 102 10 78"],
+ "t":["M42 0 L42 82 C42 98 70 102 86 92","M6 24 L82 24"],
+ "u":["M8 0 L8 70 C8 102 88 102 88 70","M90 0 L90 100"],
+ "v":["M6 0 L50 100 L94 0"],
+ "w":["M4 0 L26 100 L50 30 L74 100 L96 0"],
+ "x":["M8 0 L92 100","M92 0 L8 100"],
+ "y":["M8 0 L50 70","M92 0 L46 84 C42 95 36 98 24 96"],
+ "z":["M8 0 L92 0 L8 100 L92 100"]
+};
+
+var anim=null, animStrokes=null;
+
+/* Kotak tinta huruf: tempat koordinat 0..100 dipetakan. Dipakai kotak
+   nyata glyph, bukan kotak font, supaya jalur pas di huruf sempit (I)
+   maupun lebar (W). */
+/* Kotak tinta tiap huruf dalam teks. Angka seperti 27 ditulis dua angka
+   berurutan, jadi tiap angka dapat kotaknya sendiri dan contohnya berjalan
+   dari angka pertama ke angka kedua, persis urutan menulisnya. */
+function kotakHuruf(){
+  var c=document.createElement("canvas").getContext("2d");
+  c.font=glyphFont(geom.size); c.textAlign="left"; c.textBaseline="middle";
+  var t=geom.text, x=geom.x-c.measureText(t).width/2, out=[];
+  for(var i=0;i<t.length;i++){
+    var ch=t.charAt(i), m=c.measureText(ch);
+    if(!m||m.actualBoundingBoxLeft===undefined) return null;
+    var w=m.actualBoundingBoxLeft+m.actualBoundingBoxRight;
+    var h=m.actualBoundingBoxAscent+m.actualBoundingBoxDescent;
+    if(w>1&&h>1) out.push({ch:ch, x:x-m.actualBoundingBoxLeft,
+                           y:geom.y-m.actualBoundingBoxAscent, w:w, h:h});
+    x+=m.width;
+  }
+  return out.length?out:null;
+}
+function titikJalur(d,ubah){
+  var svg=document.createElementNS("http://www.w3.org/2000/svg","svg");
+  svg.setAttribute("width","0"); svg.setAttribute("height","0");
+  svg.style.cssText="position:absolute;width:0;height:0;overflow:hidden";
+  var el=document.createElementNS("http://www.w3.org/2000/svg","path");
+  el.setAttribute("d",d); svg.appendChild(el); document.body.appendChild(svg);
+  var out=[];
+  try{
+    var L=el.getTotalLength(), step=Math.max(.5,L/200);
+    for(var t=0;t<L;t+=step) out.push(ubah(el.getPointAtLength(t)));
+    out.push(ubah(el.getPointAtLength(L)));
+  }catch(_){}
+  svg.parentNode.removeChild(svg);
+  return out;
+}
+/* Jalur untuk huruf yang sedang dibuka, atau null kalau tidak ada. */
+function jalurItem(){
+  if(!geom) return null;
+  if(geom.kind==="path"){
+    var u=geom.box/100, dx=geom.dx, dy=geom.dy;
+    var t=titikJalur(geom.d,function(q){return {x:dx+q.x*u, y:dy+q.y*u};});
+    return t.length>1?[t]:null;
+  }
+  var kk=kotakHuruf(); if(!kk) return null;
+  var out=[];
+  for(var h=0;h<kk.length;h++){
+    var dd=GORESAN[kk[h].ch]; if(!dd) return null;
+    for(var i=0;i<dd.length;i++){
+      var t2=titikJalur(dd[i],(function(bx){ return function(q){
+        return {x:bx.x+(q.x/100)*bx.w, y:bx.y+(q.y/100)*bx.h};
+      };})(kk[h]));
+      if(t2.length) out.push(t2);
+    }
+  }
+  return out.length?out:null;
+}
+/* Pengaman: jalur ditulis tangan, sedangkan huruf digambar oleh font yang
+   bisa saja berbeda di tiap perangkat (Andika belum terunduh, misalnya).
+   Jadi sebelum diputar, jalurnya diperiksa dulu ke bentuk huruf yang
+   benar-benar tampil. Kalau banyak meleset, contohnya tidak ditampilkan
+   sama sekali, lebih baik diam daripada mengajarkan jalan yang salah. */
+function jalurPas(ss){
+  var sc=Math.min(1,200/Math.max(padW,padH));
+  var W=Math.max(40,Math.round(padW*sc)), H=Math.max(40,Math.round(padH*sc));
+  var a=alphaOf(W,H,function(c){corePaint(c,sc,"stensil");});
+  var n=0,masuk=0;
+  for(var i=0;i<ss.length;i++) for(var j=0;j<ss[i].length;j++){
+    var x=Math.round(ss[i][j].x*sc), y=Math.round(ss[i][j].y*sc);
+    if(x<0||y<0||x>=W||y>=H){n++;continue;}
+    n++; if(a[(y*W+x)*4+3]>24) masuk++;
+  }
+  return n>0 && masuk/n>=0.9;
+}
+function hentikanContoh(){
+  if(!anim) return;
+  if(anim.raf) cancelAnimationFrame(anim.raf);
+  anim=null;
+  var b=document.getElementById("w-demo"); if(b) b.className="demo-btn";
+  if(pctx&&geom) redraw();
+}
+function adaContoh(){
+  if(!geom||S.contoh==="mati") return false;
+  if(!animStrokes) animStrokes=jalurItem()||false;
+  return !!animStrokes;
+}
+/* Titik berjalan menyusuri huruf, satu goresan demi satu goresan, dengan
+   jeda singkat di tiap awal goresan supaya terlihat jelas mulainya dari mana. */
+function mainkanContoh(){
+  if(!pctx||!geom) return;
+  hentikanContoh();
+  if(!adaContoh()) return;
+  var ss=animStrokes;
+  var b=document.getElementById("w-demo"); if(b) b.className="demo-btn main";
+  var panjang=ss.map(function(s){
+    var t=0; for(var i=1;i<s.length;i++){
+      var dx=s[i].x-s[i-1].x, dy=s[i].y-s[i-1].y; t+=Math.sqrt(dx*dx+dy*dy);
+    } return Math.max(1,t);
+  });
+  anim={i:0, t:0, mulai:0, raf:0};
+  var LAJU=190, TAHAN=420, JEDA=300;
+  var warna=cssVar("--accent","#4f7d8c");
+
+  function gambar(sampai){
+    redraw();
+    pctx.save();
+    penStyle(pctx,1,PEN);
+    /* goresan yang sudah lewat tetap terlihat, lebih pudar */
+    pctx.globalAlpha=.5; pctx.strokeStyle=warna;
+    for(var i=0;i<anim.i;i++) jalan(ss[i],ss[i].length-1);
+    pctx.globalAlpha=.85; jalan(ss[anim.i],sampai);
+    pctx.restore();
+    var p=ss[anim.i][Math.max(0,Math.min(sampai,ss[anim.i].length-1))];
+    pctx.save();
+    pctx.fillStyle=warna; pctx.globalAlpha=.22;
+    pctx.beginPath(); pctx.arc(p.x,p.y,PEN*1.15,0,6.3); pctx.fill();
+    pctx.globalAlpha=1; pctx.fillStyle=warna;
+    pctx.beginPath(); pctx.arc(p.x,p.y,PEN*0.46,0,6.3); pctx.fill();
+    pctx.strokeStyle="#fff"; pctx.lineWidth=3;
+    pctx.beginPath(); pctx.arc(p.x,p.y,PEN*0.46,0,6.3); pctx.stroke();
+    pctx.restore();
+  }
+  function jalan(s,sampai){
+    if(!s.length) return;
+    pctx.beginPath(); pctx.moveTo(s[0].x,s[0].y);
+    for(var j=1;j<=sampai&&j<s.length;j++) pctx.lineTo(s[j].x,s[j].y);
+    if(sampai<1) pctx.lineTo(s[0].x+.01,s[0].y);
+    pctx.stroke();
+  }
+  function langkah(now){
+    if(!anim) return;
+    if(!anim.mulai) anim.mulai=now;
+    var lewat=now-anim.mulai;
+    if(lewat<TAHAN){ gambar(0); anim.raf=requestAnimationFrame(langkah); return; }
+    var maju=(lewat-TAHAN)/1000*LAJU;
+    var frac=maju/panjang[anim.i];
+    if(frac>=1){
+      gambar(ss[anim.i].length-1);
+      anim.i++;
+      if(anim.i>=ss.length){
+        anim.raf=0;
+        setTimeout(function(){ if(anim){ anim=null;
+          var bb=document.getElementById("w-demo"); if(bb) bb.className="demo-btn";
+          redraw(); } }, JEDA*2);
+        return;
+      }
+      anim.mulai=now+JEDA;
+      anim.raf=requestAnimationFrame(langkah); return;
+    }
+    gambar(Math.floor(frac*(ss[anim.i].length-1)));
+    anim.raf=requestAnimationFrame(langkah);
+  }
+  anim.raf=requestAnimationFrame(langkah);
+}
+/* Panjang seluruh coretan, dipakai membedakan menulis dari mewarnai:
+   menulis menempuh jarak pendek, mewarnai bolak-balik jauh lebih panjang. */
+function panjangCoretan(){
+  var t=0;
+  for(var i=0;i<strokes.length;i++){
+    var s=strokes[i];
+    for(var j=1;j<s.length;j++){
+      var dx=s[j].x-s[j-1].x, dy=s[j].y-s[j-1].y;
+      t+=Math.sqrt(dx*dx+dy*dy);
+    }
+  }
+  return t;
+}
 function alphaOf(w,h,paint){
   var cv=document.createElement("canvas"); cv.width=w; cv.height=h;
   var c=cv.getContext("2d"); paint(c);
@@ -1426,13 +1764,30 @@ function evaluate(){
   /* Ketepatan tidak dinilai saat stensil aktif: coretan memang tidak
      mungkin keluar, jadi yang tersisa untuk dinilai hanya kelengkapannya. */
   var tepat=pakaiStensil||acc>=L.acc;
-  var pass=enough&&cov>=L.cov&&tepat;
+  /* Huruf bisa saja tertutup penuh tanpa anak benar-benar menulis, misalnya
+     dengan menyapu bolak-balik. Yang membedakan adalah jarak yang ditempuh
+     jari: menulis menempuh jarak pendek, menyapu berkali-kali lipat.
+     Diperiksa sebelum bilah digambar, supaya bilah tidak terlanjur hijau. */
+  var panjang=panjangCoretan();
+  var perlu=(coreN/(sc*sc))*L.cov/(PEN+20);
+  var rasio=panjang/Math.max(1,perlu);
+  var menyapu=(S.antiSapu!==false)&&enough&&rasio>BATAS_SAPU;
+  var pass=enough&&cov>=L.cov&&tepat&&!menyapu;
 
   var bar=document.getElementById("w-bar");
-  if(bar){bar.style.width=Math.min(100,Math.round(cov/L.cov*100))+"%"; bar.className=pass?"ok":"";}
+  if(bar){
+    /* saat ditolak, bilah menunjukkan sebagian saja: huruf memang tertutup,
+       tapi belum terhitung sebagai menulis */
+    bar.style.width=(menyapu?30:Math.min(100,Math.round(cov/L.cov*100)))+"%";
+    bar.className=pass?"ok":"";
+  }
+
+  window.__ukur={cov:cov,acc:acc,panjang:Math.round(panjang),perlu:Math.round(perlu),
+                 rasio:+rasio.toFixed(2),goresan:strokes.length,menyapu:menyapu,lulus:pass};
 
   if(pass) finishItem();
   else if(!enough) setStatus("Mulai tebalkan garisnya",false);
+  else if(menyapu) setStatus("Tekan Hapus, lalu ikuti bentuk hurufnya",false);
   else if(!tepat) setStatus("Ikuti garisnya ya",false);
   else setStatus("Bagus, masih ada bagian yang kosong",false);
 }
@@ -1451,7 +1806,8 @@ function finishItem(){
 }
 function clearPad(){
   if(!pctx) return;
-  strokes=[];
+  hentikanContoh();
+  strokes=[]; jariAktif=null;
   if(inkCv){ inkCv.c.setTransform(DPR,0,0,DPR,0,0); inkCv.c.clearRect(0,0,padW,padH); }
   redraw();
   var bar=document.getElementById("w-bar");
@@ -1534,16 +1890,19 @@ function viewSettings(){
   seg("Gambar dan kata","Contoh kata di bawah huruf","words",[[true,"Tampil"],[false,"Sembunyi"]])+
   seg("Gambar profesi","Foto, atau gambar sederhana yang lebih tenang","gambar",[["foto","Foto"],["sederhana","Sederhana"]])+
   seg("Warna layar","Gelap lebih nyaman di mata","theme",[["auto","Otomatis"],["light","Terang"],["dark","Gelap"]])+
+  seg("Tampilan beranda","Daftar: satu kartu per baris, paling mudah dipindai anak. Petak: dua kolom, semua materi muat tanpa gulir panjang","beranda",[["daftar","Daftar"],["petak","Petak"]])+
   seg("Hadiah setiap 5 berhasil","Muncul sebentar lalu kembali sendiri","reward",[["kereta","Kereta"],["bintang","Bintang"],["mati","Mati"]])+
   seg("Suara hadiah","Deru dan peluit kereta","rewardSound",[[true,"Nyala"],[false,"Mati"]])+
   seg("Bantuan saat latihan","Pilihan salah memudar setelah dua kali meleset","helpQuiz",[[true,"Nyala"],[false,"Mati"]])+
   seg("Perintah di tahap Sama dan Pasang","Menyebut nama yang dicari, atau perintah saja agar anak mencocokkan sendiri","askName",[["sebut","Sebut namanya"],["singkat","Perintah saja"]])+
   seg("Pilihan saat latihan","Mulai dari 2 pilihan","choices",[[2,"2"],[3,"3"],[4,"4"]])+
   seg("Batas angka","Berlaku di Belajar, Menulis, Papan, dan Latihan","range",[[10,"1-10"],[20,"1-20"],[50,"1-50"],[100,"1-100"]])+
+  seg("Contoh cara menulis","Titik berjalan menyusuri huruf, menunjukkan dari mana mulai dan ke arah mana","contoh",[["otomatis","Otomatis"],["tombol","Tombol saja"],["mati","Mati"]])+
   seg("Kunci saat menulis","Item berikutnya terbuka setelah yang ini selesai","writeLock",[[true,"Nyala"],[false,"Mati"]])+
   seg("Ketelitian menulis","Longgar: cukup digaris. Sedang: ditebalkan. Teliti: hampir diwarnai penuh","writeLevel",[["longgar","Longgar"],["sedang","Sedang"],["teliti","Teliti"]])+
   seg("Bantuan menulis","Otomatis: bantuan menyusut setelah 6 dan 14 item selesai","writeGuide",[["otomatis","Otomatis"],["penuh","Penuh"],["garis","Garis"],["samar","Samar"]])+
   seg("Batas menulis","Seperti stensil: coretan di luar huruf tidak membekas","stensil",[["dalam","Dalam huruf"],["bebas","Bebas"]])+
+  seg("Harus ditulis, bukan diwarnai","Menolak huruf yang dipenuhi dengan sapuan bolak-balik","antiSapu",[[true,"Nyala"],[false,"Mati"]])+
   '<div class="setting"><div class="lbl">Materi yang ditampilkan</div>'+
   '<div class="hint">Sembunyikan yang belum dipakai supaya beranda tetap pendek</div>'+
   daftarMateri()+'</div>'+
@@ -1564,6 +1923,111 @@ function seg(lbl,hint,key,opts){
     h+='<button data-act="set" data-key="'+key+'" data-val="'+v+'" aria-pressed="'+(S[key]===v)+'">'+opts[i][1]+'</button>';
   }
   return h+'</div></div>';
+}
+
+/* ===================== PENCAPAIAN =====================
+   Halaman untuk orang tua dan terapis. Isinya hanya yang benar-benar
+   tercatat: item yang sudah selesai ditulis, dan item yang dikenali anak
+   di percobaan pertama saat latihan. Yang tidak tercatat tidak dikarang,
+   dan Belajar memang tidak dihitung karena membuka halaman bukan tanda
+   anak sudah bisa. */
+function jumlahSemua(t){
+  var k=TOPICS[t].kind;
+  if(k==="letter") return 26;
+  if(k==="num") return S.range||100;
+  if(k==="hijaiyah") return HIJAIYAH.length;
+  if(k==="shape") return SHAPES.length;
+  if(k==="color") return COLORS.length;
+  if(k==="profesi") return PROFESI.length;
+  if(k==="buah") return BUAH.length;
+  if(k==="kendaraan") return KENDARAAN.length;
+  if(k==="aktivitas") return AKTIVITAS.length;
+  if(k==="benda") return BENDA_RUMAH.length;
+  return 0;
+}
+function hitungKenal(t){
+  var d=S.kenal[t]||{}, n=0, tunjuk=0;
+  for(var k in d){ n++; if(d[k]>=3) tunjuk++; }
+  return {jumlah:n, tunjuk:tunjuk};
+}
+function punyaTulis(t){ return TOPICS[t].tabs.indexOf("tulis")>=0; }
+function kartuCapai(t){
+  var tint=TINT[t]||"var(--accent)", total=jumlahSemua(t);
+  var h='<div class="capai" style="--tint:'+tint+'"><h4>'+KARTU[t][1]+'</h4>';
+  if(t==="pattern") return h+'<div class="kosong">Pola tidak dicatat per item, soalnya dibuat baru setiap kali.</div></div>';
+  if(punyaTulis(t)){
+    var d=cnt(t);
+    h+='<div class="baris"><span>Sudah ditulis</span><b>'+d+' dari '+total+'</b></div>'+
+       '<span class="bar"><u style="width:'+Math.round(Math.min(1,total?d/total:0)*100)+'%"></u></span>';
+  }
+  var k=hitungKenal(t);
+  h+='<div class="baris"><span>Dikenali saat latihan</span><b>'+k.jumlah+' dari '+total+'</b></div>';
+  if(k.jumlah) h+='<div class="baris"><span>Sampai tahap Tunjuk</span><b>'+k.tunjuk+'</b></div>';
+  return h+'</div>';
+}
+function viewPencapaian(){
+  var h='<div class="doc">'+
+    '<p class="kecil">Catatan untuk orang tua dan terapis. Tidak ada yang perlu '+
+    'dikejar di sini, dan angka yang diam bukan berarti anak mundur.</p>'+
+    '<div class="capai" style="--tint:var(--star)"><h4>Bintang</h4>'+
+    '<div class="baris"><span>Terkumpul</span><b>'+S.stars+'</b></div></div>';
+  for(var g=0;g<KELOMPOK.length;g++){
+    for(var i=0;i<KELOMPOK[g].isi.length;i++){
+      var t=KELOMPOK[g].isi[i];
+      if(S.sembunyi&&S.sembunyi[t]) continue;
+      h+=kartuCapai(t);
+    }
+  }
+  return h+'<button class="mailbtn" data-act="salin-capai" id="salin-capai">Salin ringkasan</button>'+
+    '<div class="seg"><button data-act="reset-kenal">Ulang catatan latihan</button></div>'+
+    '<p class="note">Menulis sudah tercatat sejak lama. Catatan latihan baru mulai '+
+    'dihitung sejak versi '+APP.versi+', jadi awalnya pasti kosong.</p></div>';
+}
+/* Ringkasan teks supaya orang tua tinggal menempelkannya ke pesan untuk
+   terapis. Kalau papan klip ditolak browser, teksnya ditampilkan saja. */
+function teksRingkasan(){
+  var b=[APP.nama+" - ringkasan pencapaian","Bintang terkumpul: "+S.stars,""];
+  for(var g=0;g<KELOMPOK.length;g++){
+    for(var i=0;i<KELOMPOK[g].isi.length;i++){
+      var t=KELOMPOK[g].isi[i];
+      if((S.sembunyi&&S.sembunyi[t])||t==="pattern") continue;
+      var tot=jumlahSemua(t), k=hitungKenal(t), baris=KARTU[t][1]+": ";
+      if(punyaTulis(t)) baris+="ditulis "+cnt(t)+" dari "+tot+", ";
+      baris+="dikenali "+k.jumlah+" dari "+tot;
+      if(k.jumlah) baris+=" ("+k.tunjuk+" sampai tahap Tunjuk)";
+      b.push(baris);
+    }
+  }
+  return b.join("\n");
+}
+function salinRingkasan(){
+  var teks=teksRingkasan(), el=document.getElementById("salin-capai");
+  var ok=function(){
+    if(!el) return;
+    el.textContent="Tersalin";
+    setTimeout(function(){ if(el) el.textContent="Salin ringkasan"; },2000);
+  };
+  try{
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(teks).then(ok,function(){ tampilRingkasan(teks); });
+      return;
+    }
+  }catch(e){}
+  tampilRingkasan(teks);
+}
+function tampilRingkasan(teks){
+  if(document.getElementById("ov")) return;
+  var wrap=document.createElement("div");
+  wrap.innerHTML='<div class="ov" id="ov"><div class="dlg" role="dialog" aria-modal="true">'+
+    '<h3>Ringkasan</h3><p class="kecil">Papan klip tidak bisa dipakai di sini, '+
+    'jadi teksnya ditampilkan supaya bisa disalin sendiri.</p>'+
+    '<p class="ringkas">'+esc(teks)+'</p>'+
+    '<button class="dlgbtn utama" data-dlg="tutup">Tutup</button></div></div>';
+  var ov=wrap.firstChild;
+  document.body.appendChild(ov);
+  ov.addEventListener("click",function(e){
+    if(e.target===ov||e.target.closest("[data-dlg]")) closeNotice();
+  });
 }
 
 /* ===================== HADIAH =====================
@@ -1859,6 +2323,9 @@ main.addEventListener("click",function(e){
   }
   if(a==="go-set"){ V.screen="set"; render(); return; }
   if(a==="go-about"){ V.screen="about"; render(); return; }
+  if(a==="go-capai"){ V.screen="capai"; render(); return; }
+  if(a==="salin-capai"){ salinRingkasan(); return; }
+  if(a==="reset-kenal"){ S.kenal={}; save(); render(); return; }
   if(a==="cek-bahasa"){ loadVoices(); showVoiceNotice(true); return; }
   if(a==="install"){ if(sudahTerpasang()) return; pasangAplikasi(); return; }
   if(a==="tab"){
@@ -1880,6 +2347,7 @@ main.addEventListener("click",function(e){
   }
   if(a==="say"){ sayCurrent(); return; }
   if(a==="clear"){ clearPad(); return; }
+  if(a==="contoh"){ if(anim) hentikanContoh(); else mainkanContoh(); return; }
   if(a==="say-q"){ askQ(); return; }
   if(a==="skip"){ newQuestion(); render(); askQ(); return; }
   if(a==="answer"){ answer(b); return; }

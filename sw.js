@@ -1,6 +1,6 @@
 /* Service worker: membuat aplikasi tetap jalan tanpa internet.
    Naikkan VERSION setiap kali index.html diubah, supaya cache lama dibuang. */
-const VERSION = "ujung-jari-v34";
+const VERSION = "ujung-jari-v38";
 const SHELL = VERSION + "-shell";
 const FONTS = VERSION + "-fonts";
 
