@@ -1,0 +1,238 @@
+UJUNG JARI versi 5.0.1
+Aplikasi belajar huruf, huruf hijaiyah, angka, bentuk, warna, pola,
+profesi, buah, kendaraan, kegiatan sehari-hari, dan benda di rumah
+untuk anak.
+
+====================================================================
+0. PENTING: FOLDER icons/ BELUM ADA DI PAKET INI
+====================================================================
+Paket ini TIDAK berisi folder icons/, karena berkas PNG tidak bisa
+dititipkan lewat project (project hanya menyimpan teks).
+
+Sebelum di-deploy, salin folder icons/ dari paket 4.6 ke folder ini.
+Isinya lima berkas:
+
+  icons/icon-192.png
+  icons/icon-512.png
+  icons/icon-192-maskable.png
+  icons/icon-512-maskable.png
+  icons/apple-touch-icon.png
+
+Kalau folder itu tidak ada, aplikasi tetap bisa dibuka, TAPI:
+- tombol "Pasang di layar utama" tidak muncul di Chrome, karena
+  manifest menunjuk ikon yang tidak ada
+- sw.js memakai addAll yang gagal total bila satu berkas meleset,
+  jadi aplikasi tidak akan siap dipakai tanpa internet
+
+====================================================================
+1. ALAMAT EMAIL UNTUK SARAN
+====================================================================
+Buka index.html dengan editor teks apa pun. Di bagian atas ada blok:
+
+  var APP={
+    nama   : "Ujung Jari",
+    versi  : "5.0.1",
+    email  : "support.ujungjari@gmail.com",
+    subjek : "Saran untuk Ujung Jari"
+  };
+
+Alamat email sudah terisi. Kalau mau diganti, ubah di sini saja,
+tidak ada tempat lain.
+
+====================================================================
+2. CARA DEPLOY
+====================================================================
+Pilih salah satu. index.html harus berada di akar (root), bukan di
+dalam subfolder.
+
+A. Netlify Drop (paling cepat, tanpa akun)
+   1. Buka app.netlify.com/drop
+   2. Seret FOLDER ini ke halaman tersebut
+   3. Dapat URL https://xxx.netlify.app
+
+B. GitHub Pages
+   1. Buat repo baru, unggah semua isi folder ini ke akar repo
+   2. Settings > Pages > Source: branch main, folder / (root)
+   3. Tunggu sekitar satu menit
+
+Lalu buka URL-nya di Chrome Android. Di beranda aplikasi akan muncul
+tombol "Pasang di layar utama", tinggal ditekan. Tombol itu hilang
+sendiri setelah aplikasi terpasang.
+
+Syarat tombol itu muncul: situs harus diakses lewat HTTPS (Netlify dan
+GitHub Pages sudah otomatis HTTPS) dan dibuka di Chrome, bukan di dalam
+browser bawaan aplikasi lain seperti WhatsApp. Di iPhone, Safari tidak
+menyediakan dialog pasang otomatis, jadi tombol itu menampilkan
+petunjuk manual lewat tombol Bagikan.
+
+====================================================================
+3. ISI FOLDER
+====================================================================
+index.html      kode aplikasi
+data/           gambar dan video, semuanya dimuat saat aplikasi dibuka
+                profesi.js, buah.js, kendaraan.js, aktivitas.js,
+                benda.js, kereta.js, kalimat.js
+manifest.json   nama, ikon, mode layar penuh, pintasan
+sw.js           service worker, membuat aplikasi jalan tanpa internet
+icons/          ikon 192 dan 512, versi biasa dan maskable
+                (SALIN SENDIRI DARI PAKET 4.6, lihat bagian 0)
+
+Gambar disimpan sebagai JPEG mutu 72. Kalau nanti menambah gambar,
+pakai mutu yang sama supaya ukurannya konsisten.
+
+PENTING: folder data/ harus ikut diunggah. Semua berkas di dalamnya
+dimuat sekali saat aplikasi dibuka, lalu disimpan service worker,
+jadi setelah pembukaan pertama semua gambar tersedia tanpa internet.
+
+====================================================================
+4. KALAU NANTI MENGUBAH ISI APLIKASI
+====================================================================
+Setiap kali index.html diubah, naikkan nomor versi cache di sw.js:
+
+  const VERSION = "ujung-jari-v38";   ->   "ujung-jari-v39"
+
+Tanpa itu, perangkat yang sudah memasang akan terus memakai versi
+lama dari cache. Naikkan juga "versi" di blok APP pada index.html
+supaya nomor di halaman Tentang ikut berubah.
+
+====================================================================
+5. YANG BARU DI 4.7 SAMPAI 5.0
+====================================================================
+- Tampilan beranda bisa dipilih (4.7). Pengaturan > Tampilan beranda:
+  Daftar (satu kartu per baris, bawaan) atau Petak (dua kolom).
+  Kelompok Lainnya di bawah tetap daftar di kedua mode.
+
+- Halaman Pencapaian (4.8). Ada di beranda, kelompok Lainnya, di atas
+  Tentang. Isinya untuk orang tua dan terapis: berapa item sudah
+  ditulis, berapa yang dikenali anak saat latihan, dan berapa yang
+  sampai tahap Tunjuk. Ada tombol Salin ringkasan untuk ditempel ke
+  pesan buat terapis.
+
+  Catatan latihan hanya dicatat kalau anak benar di percobaan
+  PERTAMA. Setelah dua kali meleset, pilihan yang salah dipudarkan
+  sampai tersisa yang benar, jadi jawaban benar sesudah itu bukan
+  tanda anak mengenali.
+
+  Catatan latihan mulai dihitung sejak 4.8, jadi di perangkat yang
+  sudah lama dipakai angkanya mulai dari nol. Progres Menulis tidak
+  terpengaruh, itu sudah tercatat sejak lama dan tetap utuh.
+
+- Perbaikan kunci saat menulis (4.8.1). Nomor item dipakai bersama oleh
+  tab Belajar dan tab Menulis. Dulu, kalau anak menggeser sampai huruf D
+  di Belajar lalu pindah ke Menulis, dia langsung mendarat di D padahal
+  A, B, dan C belum ditulis, jadi kuncinya terlewat. Sekarang saat pindah
+  ke Menulis posisinya ditarik mundur ke item pertama yang belum selesai,
+  dan statusnya berbunyi "Mulai dari huruf A dulu". Kalau Kunci saat
+  menulis dimatikan di Pengaturan, tidak ada yang ditarik mundur.
+
+- Menulis huruf hijaiyah (4.9). Dulu hijaiyah ikut bentuk font Arab dan
+  tidak punya contoh cara menulis sama sekali. Sekarang ke-30 huruf punya
+  jalur garis tengah sendiri, diambil dari kartu hijaiyah milik Ical.
+  Jalur yang sama dipakai dua kali: ditebalkan jadi stensilnya, dan
+  ditelusuri titik berjalan jadi contohnya, jadi keduanya mustahil
+  berselisih. Menulis hijaiyah juga tidak lagi bergantung pada font Arab
+  yang bisa saja belum terunduh. Datanya ada di HIJ_JALUR dalam index.html,
+  sekitar 24 KB, satu larik per goresan: badan huruf dulu, baru titiknya.
+  Bentuk hurufnya ikut kartu, jadi berbeda dari bentuk font yang dipakai
+  di Belajar dan Latihan. Jim dan Mim yang paling terasa bedanya.
+
+- Materi Menyusun Kalimat (5.0). Materi baru, ada di kelompok Kegiatan.
+  Empat tokoh (Mama, Papa, Aku, Adik) kali sepuluh kegiatan = 40 kalimat
+  dua kata. Punya Belajar dan Latihan, tidak punya Menulis.
+
+  Latihan materi ini punya tahapnya sendiri, bukan Sama/Pasang/Tunjuk:
+    Lengkapi : kartu tokoh sudah terpasang, anak memilih kegiatannya saja.
+    Susun    : dua kotak kosong, pilihannya campur kartu tokoh dan kartu
+               kegiatan, dan tokohnya harus dipilih lebih dulu.
+  Petunjuknya gambar kegiatan di atas, dipotong sampai di atas tulisan pada
+  kartunya supaya jawabannya tidak terbaca langsung dari petunjuk, ditambah
+  ucapan kalimat lengkapnya.
+
+  Bintang dan token baru diberikan setelah kotak kedua terisi, bukan per
+  kartu, supaya satu kalimat tetap bernilai satu keberhasilan.
+
+  Setelan Pilihan saat latihan ikut berlaku: pada angka 2 dan 3, tahap Susun
+  memberi empat kartu yang muat satu baris; dinaikkan ke 4, kartunya jadi
+  enam dan layarnya perlu digulir sedikit di ponsel kecil.
+
+  Gambarnya di data/kalimat.js, sekitar 550 KB, jadi paketnya naik dari
+  1,6 MB ke sekitar 2,2 MB.
+
+  Suaranya (5.0.1): jawaban benar cukup dijawab "benar", kalimatnya tidak
+  diulang, karena kalimatnya sudah tersusun dan terbaca di layar. Kartu
+  pertama yang benar di tahap Susun dijawab "lanjut". Kalimat lengkapnya
+  tetap diucapkan sebagai pertanyaan, termasuk lewat tombol Dengar lagi.
+
+- Tahap Pasang untuk hijaiyah dihapus (4.9). Pasangan huruf hijaiyah
+  adalah namanya dalam huruf Latin ("Ba"), jadi soalnya sama saja dengan
+  Tunjuk, cuma namanya ditulis selain diucapkan. Untuk anak yang belum
+  membaca Latin itu bukan bantuan. Hijaiyah sekarang dua tahap saja,
+  seperti Profesi dan Buah.
+
+====================================================================
+6. CATATAN
+====================================================================
+- Font Andika (huruf latin) dan Noto Naskh Arabic (huruf hijaiyah)
+  diambil dari Google Fonts. Pembukaan pertama perlu
+  internet sekali supaya font tersimpan di cache. Setelah itu
+  offline penuh. Kalau dibuka offline sebelum itu, tampilannya
+  memakai font bawaan sistem, fungsinya tetap normal.
+
+- Suara memakai mesin text-to-speech bawaan ponsel, bukan file audio
+  di dalam aplikasi. Di perangkat baru, cek dulu lewat
+  Pengaturan > Tes suara.
+
+  Kalau suara Bahasa Indonesia belum terpasang, aplikasi sengaja DIAM,
+  tidak memakai suara asing, supaya anak tidak menghafal nama huruf
+  yang keliru (mesin Inggris membaca B jadi "bi", bukan "be").
+  Cara memasangnya: Setelan ponsel > Teks ke ucapan (kadang di dalam
+  Aksesibilitas atau Bahasa dan masukan) > pilih mesin Google >
+  Pasang data suara > Bahasa Indonesia.
+
+  Saat aplikasi dibuka dan suara Indonesia belum ada, muncul kotak
+  pemberitahuan yang menampilkan bahasa suara apa saja yang terpasang
+  di ponsel itu, beserta langkah memasangnya. Kotak itu hanya muncul
+  di beranda, tidak pernah menyela anak yang sedang belajar, dan bisa
+  dipanggil kapan saja lewat Pengaturan > Cek bahasa suara.
+
+  Kalau sedang butuh bersuara sementara, ubah Pengaturan > Suara huruf
+  jadi "Suara apa pun".
+
+- Khusus huruf hijaiyah, aplikasi memakai suara Arab kalau ponsel
+  punya. Pengucapannya jauh lebih tepat daripada mesin Indonesia yang
+  dipaksa membaca "ghain" atau "qaf". Cara memasang: di layar
+  Teks ke ucapan yang sama, Pasang data suara, pilih Bahasa Arab.
+  Bahasa ponsel TIDAK perlu diubah, tetap Indonesia.
+  Kalau tidak mau memakai suara Arab, ubah Pengaturan >
+  Suara hijaiyah jadi "Indonesia saja". Bunyinya akan didekat-dekatkan, tapi tidak
+  seakurat suara Indonesia asli.
+
+- Saat Menulis, huruf dicontohkan lebih dulu: sebuah titik berjalan
+  menyusuri huruf, satu goresan demi satu goresan, berhenti sejenak di tiap
+  awal goresan supaya anak melihat mulainya dari mana dan ke arah mana.
+  Contoh itu diputar sendiri hanya saat huruf dibuka pertama kali dan belum
+  pernah diselesaikan, dan bisa diulang lewat tombol "Caranya" di pojok kiri
+  atas kanvas. Sentuhan anak langsung menghentikannya dan jadi goresan
+  pertama, jadi anak tidak pernah ditahan menonton. Kalau mau diubah:
+  Pengaturan > Contoh cara menulis (Otomatis, Tombol saja, Mati).
+
+  Contoh ini belum ada untuk huruf hijaiyah. Untuk huruf latin dan angka,
+  aplikasi memeriksa dulu apakah jalur contohnya cocok dengan huruf yang
+  benar-benar tampil di ponsel itu; kalau tidak cocok, tombol "Caranya"
+  sengaja tidak muncul daripada menunjukkan jalan yang keliru.
+
+- Saat Menulis, coretan hanya membekas di dalam huruf, seperti stensil.
+  Bidang huruf diberi semburat tipis supaya anak melihat di mana ia
+  boleh menulis. Kalau anak sudah lancar dan perlu dilepas, ubah
+  Pengaturan > Batas menulis jadi "Bebas".
+
+  Tingkat Ketelitian menulis menentukan seberapa penuh huruf harus
+  tertutup: Longgar cukup digaris sekali, Sedang perlu ditebalkan,
+  Teliti hampir harus diwarnai penuh. Untuk anak yang baru mulai,
+  pakai Longgar.
+
+- Aplikasi ini tidak mengirim data apa pun ke mana pun. Progres dan
+  setelan tersimpan di perangkat masing-masing (localStorage).
+  Tidak ada analitik, tidak ada iklan, tidak ada pendaftaran.
+  Karena itu jumlah pemakai tidak bisa diketahui. Masukan datang
+  lewat email saja.
