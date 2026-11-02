@@ -1,30 +1,31 @@
-UJUNG JARI versi 5.5
+UJUNG JARI versi 5.6
 Aplikasi belajar huruf, huruf hijaiyah, angka, membaca kata, menyusun
 kalimat, bentuk, warna, pola, profesi, buah, kendaraan, kegiatan
 sehari-hari, dan benda di rumah untuk anak.
 
 ====================================================================
-0. MEMPERBARUI DARI 5.0.1 (yang sekarang ada di GitHub Pages)
+0. MEMPERBARUI DARI 5.5 (yang sekarang ada di GitHub Pages)
 ====================================================================
-Paket ini sudah LENGKAP, termasuk folder icons/ (diambil dari repo
-rizal2010/ujungjari). Tidak perlu menyalin apa pun dari paket lama.
+Paket ini sudah LENGKAP, termasuk folder icons/. Tidak perlu menyalin
+apa pun dari paket lama.
 
-Kalau situsnya sudah jalan di GitHub Pages, cukup unggah ulang empat
-berkas yang berubah ke akar repo, timpa yang lama:
+Repo rizal2010/ujungjari sekarang berisi 5.5 (diunggah 2 Nov). Cukup
+unggah ulang TIGA berkas yang berubah ke akar repo, timpa yang lama:
 
-  index.html      kode aplikasi 5.5
-  sw.js           nomor cache naik dari ujung-jari-v42 ke v43
-  manifest.json   deskripsi aplikasi menyebut "membaca"
+  index.html      kode aplikasi 5.6
+  sw.js           nomor cache naik dari ujung-jari-v43 ke v44
   BACA-DULU.txt   berkas ini
 
-Folder data/ dan icons/ TIDAK berubah sejak 5.0.1, jadi tidak perlu
-diunggah ulang (isinya sama persis, sudah diperiksa).
+manifest.json, folder data/, dan folder icons/ TIDAK berubah sejak
+5.5, jadi tidak perlu diunggah ulang (isinya sama persis, sudah
+diperiksa).
 
 Setelah diunggah, tunggu sekitar satu menit, lalu buka aplikasinya
-sekali dalam keadaan online. Ponsel yang sudah memasang 5.0.1 akan
+sekali dalam keadaan online. Ponsel yang sudah memasang 5.5 akan
 mengambil versi baru sendiri; kalau halaman Tentang masih menulis
-5.0.1, tutup aplikasinya lalu buka lagi. Cache lama (v42) dibuang
-otomatis.
+5.5, tutup aplikasinya lalu buka lagi. Cache lama (v43) dibuang
+otomatis. Bintang, progres menulis, catatan latihan, dan setelan
+anak tetap utuh.
 
 ====================================================================
 1. ALAMAT EMAIL UNTUK SARAN
@@ -33,7 +34,7 @@ Buka index.html dengan editor teks apa pun. Di bagian atas ada blok:
 
   var APP={
     nama   : "Ujung Jari",
-    versi  : "5.5",
+    versi  : "5.6",
     email  : "support.ujungjari@gmail.com",
     subjek : "Saran untuk Ujung Jari"
   };
@@ -90,14 +91,50 @@ jadi setelah pembukaan pertama semua gambar tersedia tanpa internet.
 ====================================================================
 Setiap kali index.html diubah, naikkan nomor versi cache di sw.js:
 
-  const VERSION = "ujung-jari-v43";   ->   "ujung-jari-v44"
+  const VERSION = "ujung-jari-v44";   ->   "ujung-jari-v45"
 
 Tanpa itu, perangkat yang sudah memasang akan terus memakai versi
 lama dari cache. Naikkan juga "versi" di blok APP pada index.html
 supaya nomor di halaman Tentang ikut berubah.
 
 ====================================================================
-5. YANG BARU DI 5.1 SAMPAI 5.5: MEMBACA
+5. YANG BARU DI 5.6: NAMA ANAK DAN NAMA ADIK
+====================================================================
+Kata AKU dan ADIK bisa diganti nama asli, supaya anak belajar
+mengenali tulisan namanya sendiri dan nama adiknya. Nama sendiri
+biasanya kata pertama yang paling bermakna bagi anak.
+
+Caranya: Pengaturan > Nama anak, dan Nama adik (di bawah "Tulisan
+saat membaca"). Ketik namanya, lalu tutup papan ketik. Keterangan di
+bawah isian menunjukkan nama yang sedang dipakai. Kosongkan isiannya
+untuk kembali ke AKU dan ADIK.
+
+Setelah diisi, namanya dipakai di semua materi Membaca:
+- Membaca Kata, Tunjuk Tulisan, Kartu Kilas: tulisan dan suaranya
+  memakai nama. Warna bantuan di Tunjuk Tulisan tetap menandai huruf
+  yang membedakan dua nama.
+- Menyusun Kalimat: kartu tokohnya dibuat ulang, bingkai biru dan
+  gambar kartun yang sama, namanya di bawah. Kalimatnya jadi
+  "Raka makan". Kartu kegiatan tidak berubah.
+
+Pengaturan > Tulisan saat membaca sekarang punya tiga pilihan:
+MAMA (huruf besar), mama (huruf kecil), atau Mama (huruf awal besar,
+cara nama orang biasa ditulis).
+
+Perlu diketahui:
+- Nama paling panjang 12 karakter. Hanya huruf, spasi, tanda hubung, dan
+  apostrof yang disimpan.
+- Mengganti nama mengulang catatan latihan untuk kata itu saja (di
+  Membaca Kata, Tunjuk Tulisan, dan Menyusun Kalimat), karena catatan
+  lama milik kata AKU, bukan nama baru. Warna bantuan Tunjuk Tulisan
+  mulai lagi dari penuh. Mengganti huruf besar-kecilnya saja tidak
+  mengulang apa pun.
+- Suara membaca nama sesuai ejaannya. Cek dulu lewat tombol Dengar di
+  Membaca Kata; nama yang tidak lazim bisa terdengar kurang tepat.
+- Nama hanya tersimpan di ponsel itu, sama seperti setelan lain.
+
+====================================================================
+6. YANG BARU DI 5.1 SAMPAI 5.5: MEMBACA
 ====================================================================
 Kelompok baru di beranda, "Membaca", disusun per level metode belajar
 (dari catatan metode yang Ical unggah). Level 1 paling mudah, level 3
@@ -147,7 +184,8 @@ yang tercetak di kartunya).
   sama dengan kegiatan lain, dan tokoh lain dengan kegiatan yang sama.
 
 - Pengaturan > Tulisan saat membaca: MAMA (huruf besar, seperti kartu)
-  atau mama (huruf kecil, seperti buku sekolah).
+  atau mama (huruf kecil, seperti buku sekolah). Sejak 5.6 ada juga
+  Mama (huruf awal besar).
 
 - Halaman Tentang punya bagian "Metode belajar", dan Pencapaian
   menulis metode tiap materi, untuk orang tua dan terapis.
@@ -156,10 +194,10 @@ yang tercetak di kartunya).
   penelitian menunjukkan gambar di samping tulisan bisa menahan
   perhatian anak sehingga tulisannya tidak ikut terpelajari. Bantuan
   yang menempel di tulisannya sendiri (warna pada huruf pembeda) lebih
-  berhasil pada anak autis.
+  berhasil.
 
 ====================================================================
-6. YANG BARU DI 4.7 SAMPAI 5.0
+7. YANG BARU DI 4.7 SAMPAI 5.0
 ====================================================================
 - Tampilan beranda bisa dipilih (4.7). Pengaturan > Tampilan beranda:
   Daftar (satu kartu per baris, bawaan) atau Petak (dua kolom).
@@ -220,7 +258,7 @@ yang tercetak di kartunya).
   enam dan layarnya perlu digulir sedikit di ponsel kecil.
 
   Gambarnya di data/kalimat.js, sekitar 550 KB, jadi paketnya naik dari
-  1,6 MB ke sekitar 2,2 MB. Materi Membaca (5.1 sampai 5.5) memakai
+  1,6 MB ke sekitar 2,2 MB. Materi Membaca (5.1 sampai 5.6) memakai
   gambar yang sama, jadi ukurannya tidak bertambah.
 
   Suaranya (5.0.1): jawaban benar cukup dijawab "benar", kalimatnya tidak
@@ -235,7 +273,7 @@ yang tercetak di kartunya).
   seperti Profesi dan Buah.
 
 ====================================================================
-7. CATATAN
+8. CATATAN
 ====================================================================
 - Font Andika (huruf latin) dan Noto Naskh Arabic (huruf hijaiyah)
   diambil dari Google Fonts. Pembukaan pertama perlu

@@ -313,6 +313,21 @@ body[data-topic="kalimat"] .stagehint{font-size:12px;margin:2px 0 4px}
 /* 5.5: kalimat tertulis di tahap Baca Menyusun Kalimat. Ukurannya dibagi
    jumlah huruf supaya kalimat terpanjang (ADIK MELAMBAI) tetap satu baris. */
 .bkata.kalimat{font-size:min(44px,calc(115vw / var(--n)))}
+/* 5.6: kartu tokoh dengan nama anak/adik, meniru kartu Ical: tepi putih
+   tipis, bingkai biru sekitar 4,5 persen lebar kartu, gambar di atas, nama
+   di bawah (tinggi huruf sekitar 12 persen lebar kartu). Ukurannya dalam
+   cqw supaya ikut lebar kartu di Belajar, di kotak, maupun di pilihan. */
+.kkartu.knama{display:block;aspect-ratio:202/267;background:#fff;container-type:inline-size;overflow:hidden}
+.knama-in{position:absolute;inset:2cqw;display:flex;flex-direction:column;align-items:center;
+  border:4.4cqw solid #1ea0fc;border-radius:9cqw;background:#fff;padding:3cqw 2cqw 0;box-sizing:border-box}
+.kkartu.knama{position:relative}
+.knama .bgbr{width:96%;aspect-ratio:auto;border-radius:0;background:transparent;animation:none}
+.knama b{display:block;margin:auto 0;font-weight:700;color:#1d2224;line-height:1;letter-spacing:.02em;
+  white-space:nowrap;font-size:min(17cqw,calc(108cqw / var(--n)))}
+/* isian nama di Pengaturan */
+.isian{display:block;width:100%;box-sizing:border-box;margin-top:8px;padding:12px 14px;font:inherit;font-size:18px;
+  border:1px solid var(--line);border-radius:14px;background:var(--surface);color:var(--ink)}
+.isian:focus{outline:3px solid var(--accent);outline-offset:1px}
 /* layar pendek (320x680 dan sejenisnya): kotak tulisan dirapatkan */
 @media (max-height:700px){.stage.baca .bkata.sedang{font-size:min(42px,calc(50vw / var(--n)))}.stage.baca .prompt{padding:10px 12px}}
 .choice.right{background:var(--ok-soft);border-color:var(--ok)}
@@ -453,7 +468,7 @@ setTimeout(function(){ var e=document.getElementById("splash"); if(e) e.remove()
    ======================================================================= */
 var APP={
   nama   : "Ujung Jari",
-  versi  : "5.5",
+  versi  : "5.6",
   email  : "support.ujungjari@gmail.com",
   subjek : "Saran untuk Ujung Jari"
 };
@@ -697,7 +712,7 @@ var TABNAME={belajar:"Belajar",tulis:"Menulis",latihan:"Latihan"};
 /* ===================== STATE ===================== */
 
 var KEY="belajar-huruf-angka:v1";
-var S={sound:true,motion:true,words:true,choices:2,range:10,theme:"auto",stars:0,beranda:"daftar",kenal:{},bacaHuruf:"besar",bacaBantu:0,bacaBeruntun:0,kilasLaju:"pelan",kilasGambar:"sesudah",kilasSesi:{},
+var S={sound:true,motion:true,words:true,choices:2,range:10,theme:"auto",stars:0,beranda:"daftar",kenal:{},bacaHuruf:"besar",namaAnak:"",namaAdik:"",bacaBantu:0,bacaBeruntun:0,kilasLaju:"pelan",kilasGambar:"sesudah",kilasSesi:{},
        writeLock:true,writeLevel:"longgar",writeGuide:"otomatis",stensil:"dalam",antiSapu:true,contoh:"otomatis",
        stage:"samakan",helpQuiz:true,voiceMode:"id",hijVoice:"auto",sembunyi:{},askName:"sebut",reward:"kereta",gambar:"foto",rewardSound:true,ttsHideNotice:false,done:{}};
 try{var raw=localStorage.getItem(KEY); if(raw){var p=JSON.parse(raw); for(var k in S){if(p&&p[k]!==undefined)S[k]=p[k];}}}catch(e){}
@@ -1027,9 +1042,19 @@ function kalTokoh(id){
   return KALIMAT_TOKOH[0];
 }
 function kalBagi(key){ var p=String(key).split(":"); return {tokoh:p[0], keg:p[1]||""}; }
-function kalKalimat(key){ var b=kalBagi(key); return b.keg ? kalTokoh(b.tokoh).nama+" "+b.keg : kalTokoh(b.tokoh).nama; }
+function kalNamaTokoh(id){ var n=namaTokoh(id); return n ? hurufAwal(n) : kalTokoh(id).nama; }
+function kalKalimat(key){ var b=kalBagi(key); return b.keg ? kalNamaTokoh(b.tokoh)+" "+b.keg : kalNamaTokoh(b.tokoh); }
 function kalGambar(key){ return FOTO_KALIMAT[key]||""; }
+/* 5.6: kartu tokoh Aku/Adik yang namanya diganti dibuat ulang: gambar dari
+   kartu aslinya (dipotong di atas tulisan AKU/ADIK), nama ditulis aplikasi.
+   Selalu huruf besar, sama seperti tulisan di kartu Mama dan Papa. */
+function kartuNama(key){
+  var n=namaTokoh(key).toUpperCase();
+  return '<span class="kkartu knama" style="--n:'+Math.max(4,n.length)+'"><span class="knama-in">'+
+         gambarPotong(key)+'<b>'+esc(n)+'</b></span></span>';
+}
 function kartuKalimat(key){
+  if((key==="aku"||key==="adik")&&namaTokoh(key)) return kartuNama(key);
   var g=kalGambar(key);
   if(!g) return '<span class="word">'+esc(kalKalimat(key))+'</span>';
   return '<img class="kkartu" src="'+g+'" alt="">';
@@ -1051,11 +1076,25 @@ function bacaItem(id){
   for(var i=0;i<BACA_KATA.length;i++) if(BACA_KATA[i].id===id) return BACA_KATA[i];
   return BACA_KATA[0];
 }
-function bacaKata(id){ return bacaItem(id).kata; }
+/* 5.6: kata "aku" dan "adik" bisa diganti nama asli anak dan adiknya
+   (Pengaturan > Nama anak / Nama adik). Kosong = kata aslinya. Nama hanya
+   tersimpan di perangkat ini, seperti setelan lain. */
+function bersihNama(s){
+  return String(s||"").replace(/[^A-Za-zÀ-ɏ' -]/g,"").replace(/\s+/g," ").trim().slice(0,12).trim();
+}
+function namaTokoh(id){
+  return bersihNama(id==="aku" ? S.namaAnak : id==="adik" ? S.namaAdik : "");
+}
+/* huruf awal tiap kata besar: "raka putra" jadi "Raka Putra" */
+function hurufAwal(s){
+  return String(s).toLowerCase().replace(/(^|[\s'-])([a-zÀ-ɏ])/g,function(m,a,b){ return a+b.toUpperCase(); });
+}
+function bacaKata(id){ var n=namaTokoh(id); return n ? n.toLowerCase() : bacaItem(id).kata; }
 /* yang tampil di layar, mengikuti setelan Tulisan saat membaca */
 function bacaTulis(id){
   var k=bacaKata(id);
-  return S.bacaHuruf==="kecil" ? k.toLowerCase() : k.toUpperCase();
+  /* 5.6: pilihan ketiga, huruf awal besar (Mama, Raka) */
+  return S.bacaHuruf==="kecil" ? k.toLowerCase() : S.bacaHuruf==="awal" ? hurufAwal(k) : k.toUpperCase();
 }
 function bacaGambar(id,gaya){ return gambarPotong(bacaItem(id).foto,gaya); }
 /* Potongan gambar kartu (5.4). Bagian yang dipakai: lebar 8-92 persen,
@@ -1116,7 +1155,7 @@ function bacaTulisan(id,ukuran,sorot){
    bantuan di luar tulisan (extra-stimulus), dan penelitian menunjukkan
    gambar bisa menahan perhatian anak sehingga tulisannya tidak ikut
    terpelajari (Didden, Prinsen dan Sigafoos 2000; Dittlinger dan Lerman
-   2011 pada anak autis). Schreibman (1975): anak autis gagal belajar
+   2011). Schreibman (1975): anak dalam penelitian itu gagal belajar
    dengan bantuan di luar stimulus, tapi biasanya berhasil dengan bantuan
    di dalam stimulus.
    Sekarang bantuannya ada DI tulisannya: huruf yang membedakan kata
@@ -1667,7 +1706,8 @@ function newKalimatBaca(tk,kg){
 /* kalimat tertulis, mengikuti setelan Tulisan saat membaca */
 function kalTulisan(key){
   var t=kalKalimat(key);
-  t = S.bacaHuruf==="kecil" ? t.toLowerCase() : t.toUpperCase();
+  /* "awal": kalimat ditulis seperti biasa, nama dan Mama/Papa berhuruf awal besar */
+  t = S.bacaHuruf==="kecil" ? t.toLowerCase() : S.bacaHuruf==="awal" ? t : t.toUpperCase();
   return '<span class="bkata kalimat" style="--n:'+Math.max(8,t.length)+'">'+esc(t)+'</span>';
 }
 function viewKalimatBaca(){
@@ -2760,7 +2800,9 @@ function viewSettings(){
   seg("Pilihan saat latihan","Mulai dari 2 pilihan","choices",[[2,"2"],[3,"3"],[4,"4"]])+
   seg("Kecepatan Kartu Kilas","Lama tiap kartu. Pelan sekitar 4 detik, Cepat sekitar 1,5 detik seperti cara Glenn Doman","kilasLaju",[["pelan","Pelan"],["sedang","Sedang"],["cepat","Cepat"]])+
   seg("Gambar di Kartu Kilas","Gambar muncul sesudah tulisannya, atau tulisan saja","kilasGambar",[["sesudah","Sesudah kata"],["tidak","Tidak ada"]])+
-  seg("Tulisan saat membaca","Huruf besar seperti kartu, atau huruf kecil seperti buku sekolah. Kalau diganti, warna bantuan di Tunjuk Tulisan mulai lagi dari penuh","bacaHuruf",[["besar","MAMA"],["kecil","mama"]])+
+  seg("Tulisan saat membaca","Huruf besar seperti kartu, huruf kecil seperti buku sekolah, atau huruf awal besar seperti menulis nama. Kalau diganti, warna bantuan di Tunjuk Tulisan mulai lagi dari penuh","bacaHuruf",[["besar","MAMA"],["kecil","mama"],["awal","Mama"]])+
+  isianNama("Nama anak","Menggantikan kata AKU di materi Membaca dan Menyusun Kalimat. Gambarnya tetap gambar Aku.","namaAnak","AKU")+
+  isianNama("Nama adik","Menggantikan kata ADIK. Kosongkan kalau tetap ingin memakai kata ADIK.","namaAdik","ADIK")+
   seg("Batas angka","Berlaku di Belajar, Menulis, Papan, dan Latihan","range",[[10,"1-10"],[20,"1-20"],[50,"1-50"],[100,"1-100"]])+
   seg("Contoh cara menulis","Titik berjalan menyusuri huruf, menunjukkan dari mana mulai dan ke arah mana","contoh",[["otomatis","Otomatis"],["tombol","Tombol saja"],["mati","Mati"]])+
   seg("Kunci saat menulis","Item berikutnya terbuka setelah yang ini selesai","writeLock",[[true,"Nyala"],[false,"Mati"]])+
@@ -2781,6 +2823,46 @@ function viewSettings(){
   '<div class="seg"><button data-act="reset-stars">Mulai dari nol</button></div></div>'+
   '<p class="note">Pasang di layar utama lewat menu browser agar bisa dibuka tanpa internet.</p>';
 }
+/* Isian nama (5.6). Disimpan saat isian ditinggalkan atau Enter ditekan,
+   tanpa menggambar ulang halaman supaya gulir Pengaturan tidak loncat. */
+function ketNama(key,awal){
+  var v=bersihNama(S[key]);
+  return v ? 'Dipakai: '+esc(v.toUpperCase())+', menggantikan '+awal+'. Mengganti nama mengulang catatan latihan kata ini.'
+           : 'Kosong, memakai kata '+awal+'.';
+}
+function isianNama(lbl,hint,key,awal){
+  return '<div class="setting"><div class="lbl">'+lbl+'</div><div class="hint">'+hint+'</div>'+
+    '<input class="isian" type="text" data-nama="'+key+'" data-awal="'+awal+'" maxlength="12" autocomplete="off" '+
+    'autocapitalize="words" spellcheck="false" enterkeyhint="done" placeholder="'+awal+'" value="'+esc(bersihNama(S[key]))+'">'+
+    '<div class="hint" id="ket-'+key+'">'+ketNama(key,awal)+'</div></div>';
+}
+/* Nama berubah: kata itu jadi kata baru, jadi catatan latihannya diulang
+   (Membaca Kata, Tunjuk Tulisan, dan kalimat dengan tokoh itu), dan warna
+   bantuan Tunjuk Tulisan mulai lagi dari penuh. Kata lain tidak disentuh. */
+function gantiNama(key,val){
+  var lama=bersihNama(S[key]), baru=bersihNama(val);
+  S[key]=baru;
+  if(lama.toLowerCase()!==baru.toLowerCase()){
+    var id = key==="namaAnak" ? "aku" : "adik";
+    ["baca","bacatunjuk","kalimat"].forEach(function(t){
+      var d=S.kenal&&S.kenal[t]; if(!d) return;
+      for(var k in d) if(k===id||k.indexOf(id+":")===0) delete d[k];
+    });
+    S.bacaBantu=0; S.bacaBeruntun=0;
+  }
+  save();
+}
+main.addEventListener("change",function(e){
+  var el=e.target, key=el&&el.getAttribute&&el.getAttribute("data-nama");
+  if(!key) return;
+  gantiNama(key,el.value);
+  el.value=bersihNama(S[key]);
+  var ket=document.getElementById("ket-"+key);
+  if(ket) ket.innerHTML=ketNama(key,el.getAttribute("data-awal"));
+});
+main.addEventListener("keydown",function(e){
+  if(e.key==="Enter"&&e.target&&e.target.getAttribute&&e.target.getAttribute("data-nama")) e.target.blur();
+});
 function seg(lbl,hint,key,opts){
   var h='<div class="setting"><div class="lbl">'+lbl+'</div><div class="hint">'+hint+'</div><div class="seg'+(opts.length>3?" small":"")+'">';
   for(var i=0;i<opts.length;i++){
