@@ -1,29 +1,29 @@
-UJUNG JARI versi 5.6
+UJUNG JARI versi 5.7.1
 Aplikasi belajar huruf, huruf hijaiyah, angka, membaca kata, menyusun
 kalimat, bentuk, warna, pola, profesi, buah, kendaraan, kegiatan
 sehari-hari, dan benda di rumah untuk anak.
 
 ====================================================================
-0. MEMPERBARUI DARI 5.5 (yang sekarang ada di GitHub Pages)
+0. MEMPERBARUI DARI 5.6 (yang sekarang ada di GitHub Pages)
 ====================================================================
 Paket ini sudah LENGKAP, termasuk folder icons/. Tidak perlu menyalin
 apa pun dari paket lama.
 
-Repo rizal2010/ujungjari sekarang berisi 5.5 (diunggah 2 Nov). Cukup
-unggah ulang TIGA berkas yang berubah ke akar repo, timpa yang lama:
+Repo rizal2010/ujungjari sekarang berisi 5.6. Cukup unggah ulang
+TIGA berkas yang berubah ke akar repo, timpa yang lama:
 
-  index.html      kode aplikasi 5.6
-  sw.js           nomor cache naik dari ujung-jari-v43 ke v44
+  index.html      kode aplikasi 5.7.1
+  sw.js           nomor cache naik dari ujung-jari-v44 ke v45
   BACA-DULU.txt   berkas ini
 
 manifest.json, folder data/, dan folder icons/ TIDAK berubah sejak
-5.5, jadi tidak perlu diunggah ulang (isinya sama persis, sudah
+5.6, jadi tidak perlu diunggah ulang (isinya sama persis, sudah
 diperiksa).
 
 Setelah diunggah, tunggu sekitar satu menit, lalu buka aplikasinya
-sekali dalam keadaan online. Ponsel yang sudah memasang 5.5 akan
+sekali dalam keadaan online. Ponsel yang sudah memasang 5.6 akan
 mengambil versi baru sendiri; kalau halaman Tentang masih menulis
-5.5, tutup aplikasinya lalu buka lagi. Cache lama (v43) dibuang
+5.6, tutup aplikasinya lalu buka lagi. Cache lama (v44) dibuang
 otomatis. Bintang, progres menulis, catatan latihan, dan setelan
 anak tetap utuh.
 
@@ -34,7 +34,7 @@ Buka index.html dengan editor teks apa pun. Di bagian atas ada blok:
 
   var APP={
     nama   : "Ujung Jari",
-    versi  : "5.6",
+    versi  : "5.7.1",
     email  : "support.ujungjari@gmail.com",
     subjek : "Saran untuk Ujung Jari"
   };
@@ -91,14 +91,59 @@ jadi setelah pembukaan pertama semua gambar tersedia tanpa internet.
 ====================================================================
 Setiap kali index.html diubah, naikkan nomor versi cache di sw.js:
 
-  const VERSION = "ujung-jari-v44";   ->   "ujung-jari-v45"
+  const VERSION = "ujung-jari-v45";   ->   "ujung-jari-v46"
 
 Tanpa itu, perangkat yang sudah memasang akan terus memakai versi
 lama dari cache. Naikkan juga "versi" di blok APP pada index.html
 supaya nomor di halaman Tentang ikut berubah.
 
 ====================================================================
-5. YANG BARU DI 5.6: NAMA ANAK DAN NAMA ADIK
+5. YANG BARU DI 5.7 DAN 5.7.1: MENULIS
+====================================================================
+Pengaturan > Model menulis sekarang punya dua pilihan:
+
+  Stensil      seperti sebelumnya: huruf utuh diisi dengan jari,
+               coretan hanya membekas di dalam huruf.
+  Menebalkan   garis putus-putus di tengah huruf, anak menebalkannya
+               dengan jari, seperti buku latihan menulis.
+
+Keduanya berlaku untuk huruf besar, huruf kecil, angka, hijaiyah, dan
+bentuk. Contoh cara menulis (tombol "Caranya") tetap ada di kedua
+model.
+
+- Stensil dibuat lebih ramping (5.7). Hurufnya sekarang memakai Andika
+  biasa, bukan tebal, dan tinta jarinya 24 piksel. Dulu di Ketelitian
+  Teliti masih tersisa ruang di kiri-kanan goresan yang sulit tertutup
+  jari kecil, jadi anak tertahan walaupun sudah menulis rapi.
+  Sekarang menelusuri huruf dengan rapi sudah cukup untuk lolos di
+  Teliti. Coretan asal menutup (diarsir bolak-balik) tetap ditolak.
+
+- Menebalkan (5.7). Ketelitian di model ini artinya seberapa dekat
+  jari harus mengikuti garis:
+    Longgar  sampai 20 piksel dari garis
+    Sedang   sampai 15 piksel
+    Teliti   sampai 11 piksel
+  Sebagian besar garis harus ditelusuri (75, 85, atau 90 persen sesuai
+  Ketelitian), dan mengarsir lebar di sekitar garis tidak dihitung,
+  jadi anak memang harus mengikuti bentuk hurufnya.
+
+- Huruf tidak lagi tertutup tombol "Caranya" atau tanda centang
+  (5.7.1). Di ponsel yang layarnya pendek, beberapa huruf (misalnya
+  Ha hijaiyah dan angka 10) dulu menabrak tombol itu. Sekarang
+  hurufnya digeser ke bawah sedikit kalau perlu, dan setiap huruf
+  dijaga tidak keluar dari tepi kanvas.
+
+- Angka 1 tanpa kaki (5.7.1). Bentuk angka 1 sekarang hanya garis
+  miring di atas dan batang tegak, sama dengan yang dicontohkan
+  tombol "Caranya". Bentuk ini dipakai di Menulis, Belajar, dan
+  Latihan. Hurufnya dari font kecil bernama UJ Satu, turunan Andika
+  (lisensi SIL Open Font License) yang hanya berisi angka 1, sekitar
+  3 KB, dan ditanam langsung di index.html, jadi tidak perlu internet.
+
+- Garis tipis yang kadang tampak di tengah tinta (5.7) sudah hilang.
+
+====================================================================
+6. YANG BARU DI 5.6: NAMA ANAK DAN NAMA ADIK
 ====================================================================
 Kata AKU dan ADIK bisa diganti nama asli, supaya anak belajar
 mengenali tulisan namanya sendiri dan nama adiknya. Nama sendiri
@@ -134,7 +179,7 @@ Perlu diketahui:
 - Nama hanya tersimpan di ponsel itu, sama seperti setelan lain.
 
 ====================================================================
-6. YANG BARU DI 5.1 SAMPAI 5.5: MEMBACA
+7. YANG BARU DI 5.1 SAMPAI 5.5: MEMBACA
 ====================================================================
 Kelompok baru di beranda, "Membaca", disusun per level metode belajar
 (dari catatan metode yang Ical unggah). Level 1 paling mudah, level 3
@@ -197,7 +242,7 @@ yang tercetak di kartunya).
   berhasil.
 
 ====================================================================
-7. YANG BARU DI 4.7 SAMPAI 5.0
+8. YANG BARU DI 4.7 SAMPAI 5.0
 ====================================================================
 - Tampilan beranda bisa dipilih (4.7). Pengaturan > Tampilan beranda:
   Daftar (satu kartu per baris, bawaan) atau Petak (dua kolom).
@@ -273,13 +318,14 @@ yang tercetak di kartunya).
   seperti Profesi dan Buah.
 
 ====================================================================
-8. CATATAN
+9. CATATAN
 ====================================================================
 - Font Andika (huruf latin) dan Noto Naskh Arabic (huruf hijaiyah)
   diambil dari Google Fonts. Pembukaan pertama perlu
   internet sekali supaya font tersimpan di cache. Setelah itu
   offline penuh. Kalau dibuka offline sebelum itu, tampilannya
-  memakai font bawaan sistem, fungsinya tetap normal.
+  memakai font bawaan sistem, fungsinya tetap normal. Font UJ Satu
+  (angka 1) ditanam di index.html, jadi selalu tersedia.
 
 - Suara memakai mesin text-to-speech bawaan ponsel, bukan file audio
   di dalam aplikasi. Di perangkat baru, cek dulu lewat
@@ -319,20 +365,21 @@ yang tercetak di kartunya).
   pertama, jadi anak tidak pernah ditahan menonton. Kalau mau diubah:
   Pengaturan > Contoh cara menulis (Otomatis, Tombol saja, Mati).
 
-  Contoh ini belum ada untuk huruf hijaiyah. Untuk huruf latin dan angka,
-  aplikasi memeriksa dulu apakah jalur contohnya cocok dengan huruf yang
+  Untuk huruf hijaiyah, contohnya memakai jalur dari kartu hijaiyah
+  (sejak 4.9). Untuk huruf latin dan angka, aplikasi memeriksa dulu apakah jalur contohnya cocok dengan huruf yang
   benar-benar tampil di ponsel itu; kalau tidak cocok, tombol "Caranya"
   sengaja tidak muncul daripada menunjukkan jalan yang keliru.
 
-- Saat Menulis, coretan hanya membekas di dalam huruf, seperti stensil.
+- Di model Stensil, coretan hanya membekas di dalam huruf.
   Bidang huruf diberi semburat tipis supaya anak melihat di mana ia
   boleh menulis. Kalau anak sudah lancar dan perlu dilepas, ubah
   Pengaturan > Batas menulis jadi "Bebas".
 
-  Tingkat Ketelitian menulis menentukan seberapa penuh huruf harus
-  tertutup: Longgar cukup digaris sekali, Sedang perlu ditebalkan,
-  Teliti hampir harus diwarnai penuh. Untuk anak yang baru mulai,
-  pakai Longgar.
+  Di model Stensil, Ketelitian menulis menentukan seberapa penuh huruf
+  harus tertutup: Longgar cukup digaris sekali, Sedang perlu
+  ditebalkan, Teliti hampir harus diwarnai penuh. Di model Menebalkan,
+  Ketelitian menentukan seberapa dekat jari ke garis (lihat bagian 5).
+  Untuk anak yang baru mulai, pakai Longgar.
 
 - Aplikasi ini tidak mengirim data apa pun ke mana pun. Progres dan
   setelan tersimpan di perangkat masing-masing (localStorage).
